@@ -1,0 +1,94 @@
+/* ================= عيّنة: مظهر نيون الثمانينات / الأركيد =================
+   يعمل فقط عندما يكون على <html> الصنف neon (افتح الموقع بـ ?neon=1، وأوقفه بـ ?neon=0).
+   المحددات تبدأ بـ :root.neon لتتغلب على قواعد الوضع الداكن في app.css. */
+:root.neon.neon{
+  --paper:#06040c; --paper-2:#120d20; --card:#0c0916; --card-2:#140f24;
+  --ink:#f5eeff; --ink-2:#dccff5; --muted:#9d92ba; --faint:#5e5578; --line:#2b2248; --line-2:#1d1733;
+  --wine:#ff2e88; --wine-2:#c0126a; --wine-soft:#2b0a1f; --on-wine:#06040c;
+  --gold:#ffd23f; --gold-2:#ffe46b; --gold-soft:#2a220a;
+  --espresso:#030207; --espresso-2:#0c0916; --on-espresso:#f5eeff;
+  --cyan:#22e6ff; --green:#3dff8f; --purple:#b65cff; --orange:#ff9a1f;
+  --ok:#3dff8f; --ok-soft:#0b2a1a; --warn:#ffb020; --warn-soft:#2c1f06; --danger:#ff4d6d; --danger-soft:#2e0b14; --info:#22e6ff; --info-soft:#062530;
+  --art-bg:#100b1c; --sh-1:none; --sh-2:none; --sh-3:0 0 40px rgba(255,46,136,.35);
+  --pixel:"Press Start 2P","Courier New",monospace;
+  color-scheme:dark;
+}
+:root.neon body{background:#06040c;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:28px 28px}
+/* خطوط المسح الخفيفة مثل شاشات الأركيد */
+:root.neon body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+
+/* الشريط العلوي */
+:root.neon #topbar{background:#030207;box-shadow:none;border-bottom:0;position:sticky}
+:root.neon #topbar::after{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--wine),var(--purple),var(--cyan),var(--green),var(--gold));
+  box-shadow:0 0 12px rgba(255,46,136,.7),0 0 20px rgba(34,230,255,.4)}
+:root.neon .brand-name{font-family:var(--pixel);font-style:normal;font-weight:400;font-size:13px;line-height:1.5;color:var(--cyan);
+  text-shadow:0 0 6px var(--cyan),0 0 14px rgba(34,230,255,.6)}
+:root.neon .brand-name small{color:var(--wine);text-shadow:0 0 6px rgba(255,46,136,.7);font-size:10px}
+:root.neon .tb-btn{border:1.5px solid var(--purple);background:transparent;color:var(--ink);box-shadow:0 0 8px rgba(182,92,255,.45),inset 0 0 6px rgba(182,92,255,.25)}
+:root.neon .tb-btn .badge{background:var(--wine);border-color:#030207;box-shadow:0 0 8px var(--wine)}
+:root.neon .tb-nav a{color:var(--ink-2)}
+:root.neon .tb-nav a.on,:root.neon .tb-nav a:hover{background:transparent;color:var(--gold);text-shadow:0 0 8px var(--gold)}
+:root.neon .demo-bar{background:#0c0916;color:var(--muted);border-bottom:1px solid var(--line)}
+:root.neon .demo-bar a{color:var(--gold);text-shadow:0 0 6px rgba(255,210,63,.6)}
+:root.neon .announce{background:linear-gradient(90deg,#3b0a2a,#1b0c3a);color:var(--ink);border-bottom:1px solid var(--wine);
+  text-shadow:0 0 6px rgba(255,46,136,.8)}
+
+/* البطل */
+:root.neon .hero{background:#06040c;border:2px solid var(--wine);box-shadow:0 0 14px rgba(255,46,136,.55),inset 0 0 24px rgba(255,46,136,.18)}
+:root.neon .hero::after{border:1.5px solid rgba(34,230,255,.55);box-shadow:0 0 10px rgba(34,230,255,.35)}
+:root.neon .hero h1{font-family:var(--pixel);font-style:normal;font-weight:400;font-size:22px;line-height:1.55;letter-spacing:1px}
+:root.neon .hero h1 span{display:block}
+:root.neon .hero h1 span:nth-child(1){color:var(--cyan);text-shadow:0 0 8px var(--cyan),0 0 22px rgba(34,230,255,.6)}
+:root.neon .hero h1 span:nth-child(2){color:var(--orange);text-shadow:0 0 8px var(--orange),0 0 22px rgba(255,154,31,.6)}
+:root.neon .hero h1 span:nth-child(3){color:var(--wine);text-shadow:0 0 8px var(--wine),0 0 22px rgba(255,46,136,.6)}
+:root.neon .hero p{color:var(--ink-2)}
+:root.neon .hero-art svg{filter:drop-shadow(0 0 6px var(--wine)) drop-shadow(0 0 18px rgba(182,92,255,.7))}
+@media (min-width:700px){:root.neon .hero h1{font-size:34px}}
+
+/* أزرار نيون: إطار مضيء ونص متوهج */
+:root.neon .btn{border-width:2px;border-radius:10px;background:transparent}
+:root.neon .btn-primary{border-color:var(--wine);color:var(--wine);background:rgba(255,46,136,.08);box-shadow:0 0 10px rgba(255,46,136,.55),inset 0 0 8px rgba(255,46,136,.25);text-shadow:0 0 6px rgba(255,46,136,.8)}
+:root.neon .btn-gold{border-color:var(--gold);color:var(--gold);background:rgba(255,210,63,.07);box-shadow:0 0 10px rgba(255,210,63,.5),inset 0 0 8px rgba(255,210,63,.2);text-shadow:0 0 6px rgba(255,210,63,.8)}
+:root.neon .btn-ghost{border-color:var(--cyan);color:var(--cyan);background:rgba(34,230,255,.05);box-shadow:0 0 8px rgba(34,230,255,.4)}
+:root.neon .btn-danger{border-color:var(--danger);color:var(--danger);background:transparent}
+
+/* الحقول */
+:root.neon .input{background:#0c0916;border:1.5px solid var(--line);color:var(--ink)}
+:root.neon .input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,230,255,.15),0 0 12px rgba(34,230,255,.45)}
+
+/* الأقسام والعناوين */
+:root.neon .section h2{color:var(--ink);text-shadow:0 0 8px rgba(182,92,255,.8)}
+:root.neon .section h2::after{background:linear-gradient(90deg,var(--wine),var(--cyan));box-shadow:0 0 8px var(--wine);width:60px}
+:root.neon .section a{color:var(--cyan);text-shadow:0 0 6px rgba(34,230,255,.6)}
+
+/* بطاقات الأقسام والمنتجات: كل بطاقة بلون نيون مثل أعمدة الصورة */
+:root.neon .cat,:root.neon .card{background:#0c0916;border:2px solid var(--purple);box-shadow:0 0 10px rgba(182,92,255,.4)}
+:root.neon .cat:nth-child(1){border-color:var(--wine);box-shadow:0 0 10px rgba(255,46,136,.5)}
+:root.neon .cat:nth-child(1) .ic{color:var(--wine);filter:drop-shadow(0 0 4px var(--wine))}
+:root.neon .cat:nth-child(2){border-color:var(--gold);box-shadow:0 0 10px rgba(255,210,63,.45)}
+:root.neon .cat:nth-child(2) .ic{color:var(--gold);filter:drop-shadow(0 0 4px var(--gold))}
+:root.neon .pcard{--glow:var(--wine);background:#0c0916;border:2px solid var(--glow);box-shadow:0 0 10px color-mix(in srgb,var(--glow) 55%,transparent)}
+:root.neon .grid .pcard:nth-child(5n+2){--glow:var(--cyan)}
+:root.neon .grid .pcard:nth-child(5n+3){--glow:var(--purple)}
+:root.neon .grid .pcard:nth-child(5n+4){--glow:var(--green)}
+:root.neon .grid .pcard:nth-child(5n+5){--glow:var(--gold)}
+:root.neon .pcard:hover{transform:translateY(-2px);box-shadow:0 0 18px var(--glow)}
+:root.neon .pcard-img{background:#100b1c;border-bottom:2px solid var(--glow)}
+:root.neon .pcard-img .art{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--glow) 70%,transparent))}
+:root.neon .pcard-img .art rect{fill:#100b1c}
+:root.neon .pcard-body .kind{color:var(--glow);text-shadow:0 0 6px var(--glow)}
+:root.neon .pcard-body .price{color:var(--gold);text-shadow:0 0 6px rgba(255,210,63,.7)}
+:root.neon .grade{font-family:var(--pixel);font-size:8px;padding:4px 6px;background:#06040c;color:var(--glow,var(--cyan));border:1px solid var(--glow,var(--cyan))}
+:root.neon .sold-tag{background:var(--wine);box-shadow:0 0 12px var(--wine)}
+
+/* الشريط السفلي */
+:root.neon #bottomnav{background:#030207;border-top:2px solid var(--purple);box-shadow:0 0 14px rgba(182,92,255,.45)}
+:root.neon #bottomnav a.on{color:var(--wine);text-shadow:0 0 6px var(--wine)}
+:root.neon #bottomnav a.on .ic{filter:drop-shadow(0 0 4px var(--wine))}
+:root.neon .foot{border-top-color:var(--line)}
+:root.neon .foot .latin{font-family:var(--pixel);font-style:normal;font-size:11px;color:var(--cyan);text-shadow:0 0 6px var(--cyan)}
+@media (prefers-reduced-motion:reduce){:root.neon body::after{display:none}}
+@media (max-width:480px){:root.neon .brand-name{font-size:9.5px}:root.neon .brand-name small{font-size:9.5px}}

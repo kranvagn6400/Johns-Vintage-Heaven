@@ -5,7 +5,7 @@ const Shop = {
   async home(view) {
     const s = App.settings;
     view.innerHTML = `<section class="hero">
-        <div><h1>Johns Vintage Heaven</h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p>
+        <div><h1><span>Johns</span> <span>Vintage</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p>
           <div class="row-btns"><a class="btn btn-gold" href="#/shop?kind=record">${icon('disc')} تصفّح الأسطوانات</a>
           <a class="btn btn-ghost" href="#/shop?kind=gramophone">الغرامافونات</a></div></div>
         <div class="hero-art">${UI.art({ id: 'hero', kind: 'record' }, true)}</div>

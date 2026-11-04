@@ -12,6 +12,9 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preload" href="fonts/kufi-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/neon.css">
+<!-- عيّنة النيون: ?neon=1 لتشغيلها و ?neon=0 لإيقافها (تُحفظ في المتصفح) -->
+<script>try{var q=new URLSearchParams(location.search).get("neon");if(q==="1")localStorage.setItem("jvh_style","\"neon\"");if(q==="0")localStorage.removeItem("jvh_style");if(localStorage.getItem("jvh_style")==="\"neon\""){document.documentElement.classList.add("neon");document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">')}}catch(e){}</script>
 <script>try{var t=localStorage.getItem('jvh_theme');if(t==='"dark"'||t==='"light"')document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
 <title>Johns Vintage Heaven</title>
 </head>
