@@ -61,6 +61,11 @@ css/pixel.css (arcade-poster look, palette #F3620F #FFC20A #67944B #078D8C #0849
 never name vars --r etc., app.css uses --r for radius) + js/pixel.js (12×12 pixel icons, pixel record/gramophone art via `icon()`/`UI.art`).
 Mobile-first: bottom nav < 900px, top nav ≥ 900px. Icons regenerated with `node tools/make-icons.js`.
 
+## Designer edit mode
+`?edit=1` (off: `?edit=0` or «إنهاء») loads js/picker.js tooling: the user clicks elements and writes change notes, saved in
+localStorage `jvh_edit_notes` ({page, element, path, note}). When asked to «نفّذ ملاحظاتي», read them from the preview tab
+(`JSON.parse(localStorage.jvh_edit_notes)`), confirm the size of the work with the user, then apply. Never active for customers.
+
 ## Deploy / cache
 - Static site → Vercel (user creates GitHub repo + Vercel project; don't push without asking).
   `.vercelignore` keeps SQL, Markdown, server.js, tools, .claude off the site.
