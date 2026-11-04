@@ -56,6 +56,9 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
 ## Design
 Vintage: paper cream `--paper`, wine `--wine`, brass `--gold`, espresso header; Georgia/serif italic for the
 English brand, Kufi (OFL, fonts/) for Arabic. Light/dark tokens on `:root` (auto + manual in حسابي).
+Sample style (not default): `?pixel=1` adds class `pixel` on <html> (saved in localStorage `jvh_style`, `?pixel=0` off) →
+css/pixel.css (arcade-poster look, palette #F3620F #FFC20A #67944B #078D8C #084973 #DA0D1E as --po/--py/--pg/--pt/--pb/--pr;
+never name vars --r etc., app.css uses --r for radius) + js/pixel.js (12×12 pixel icons, pixel record/gramophone art via `icon()`/`UI.art`).
 Mobile-first: bottom nav < 900px, top nav ≥ 900px. Icons regenerated with `node tools/make-icons.js`.
 
 ## Deploy / cache

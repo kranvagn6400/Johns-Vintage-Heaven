@@ -35,7 +35,7 @@ const ICONS = {
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h16"/>'
 };
-const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+const icon = (name, cls = '') => (typeof Pixel !== 'undefined' && Pixel.on() && Pixel.icons[name]) ? Pixel.icon(name, cls) : `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 
 // ألوان دافئة لملصقات الأسطوانات عندما لا توجد صورة
 const LABEL_COLORS = ['#8c2f39', '#b5832f', '#2f5d50', '#5a3e7a', '#a3542b', '#26496b', '#7a6a2f', '#6b2f4f'];
@@ -45,6 +45,7 @@ const UI = {
 
   // رسم بديل للمنتج بدون صورة: أسطوانة أو غرامافون
   art(p, bare) {
+    if (typeof Pixel !== 'undefined' && Pixel.on()) return Pixel.art(p);
     const c = LABEL_COLORS[hashNum(p.id || p.title) % LABEL_COLORS.length];
     if (p.kind === 'gramophone') return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true">
       <rect width="200" height="200" fill="var(--art-bg)"/>

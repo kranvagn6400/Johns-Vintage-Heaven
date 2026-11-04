@@ -1,0 +1,115 @@
+/* ================= عيّنة «بكسل ريترو» (ملصق أركيد + لوحة ألوان الأسطوانات) =================
+   تعمل فقط عندما يكون على <html> الصنف pixel (افتح الموقع بـ ?pixel=1، وأوقفها بـ ?pixel=0).
+   المحددات تبدأ بـ :root.pixel لتتغلب على قواعد الوضع الداكن في app.css.
+   الحدود البكسلية: box-shadow بأربعة اتجاهات بدون border-radius فتظهر الزوايا مدرّجة. */
+:root.pixel.pixel{
+  --po:#F3620F; --py:#FFC20A; --pg:#67944B; --pt:#078D8C; --pb:#084973; --pr:#DA0D1E;
+  --paper:#f3e6cc; --paper-2:#eadbb9; --card:#fbf3e2; --card-2:#f6ead2;
+  --ink:#0b2e48; --ink-2:#1f4563; --muted:#5d7385; --faint:#9aa9b3; --line:#0b2e48; --line-2:#d9c9a6;
+  --wine:var(--pr); --wine-2:#a8000f; --wine-soft:#fbd9d3; --on-wine:#fbf3e2;
+  --gold:var(--po); --gold-2:var(--py); --gold-soft:#fde7b0;
+  --espresso:var(--pb); --espresso-2:#063a5c; --on-espresso:#fbf3e2;
+  --ok:var(--pg); --ok-soft:#e1ecd4; --warn:var(--po); --warn-soft:#fde3cf; --danger:var(--pr); --danger-soft:#fbd9d3; --info:var(--pt); --info-soft:#d3eeee;
+  --art-bg:#eadbb9; --r-sm:0; --r:0; --r-lg:0;
+  --sh-1:none; --sh-2:none; --sh-3:8px 8px 0 rgba(11,46,72,.35);
+  --pixel:"Press Start 2P","Courier New",monospace;
+  --px:3px;
+  color-scheme:light;
+}
+/* حد بكسلي بلون --pc وظل صلب */
+:root.pixel .px-box,:root.pixel .card,:root.pixel .cat,:root.pixel .pcard,:root.pixel .row,:root.pixel .stat,:root.pixel .hero,
+:root.pixel .input,:root.pixel .tab,:root.pixel .tb-btn,:root.pixel .icon-btn,:root.pixel .back-btn,:root.pixel .qty,:root.pixel .chip,:root.pixel .notice{
+  --pc:var(--ink);
+  border:0!important;border-radius:0!important;
+  box-shadow:0 calc(-1*var(--px)) 0 0 var(--pc),0 var(--px) 0 0 var(--pc),calc(-1*var(--px)) 0 0 0 var(--pc),var(--px) 0 0 0 var(--pc),
+    calc(var(--px) + 4px) calc(var(--px) + 4px) 0 0 rgba(11,46,72,.28)!important;
+  margin:var(--px)}
+:root.pixel body{background:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root.pixel .ic.px{width:24px;height:24px}
+
+/* شريط ألوان مدرّج (مثل شرائط ماكينات الأركيد) */
+:root.pixel #topbar{background:var(--pb);box-shadow:none}
+:root.pixel #topbar::after{content:"";display:block;height:12px;
+  background:linear-gradient(var(--po) 0 3px,var(--py) 3px 6px,var(--pg) 6px 9px,var(--pt) 9px 12px)}
+:root.pixel .brand-name{font-family:var(--pixel);font-style:normal;font-weight:400;font-size:13px;line-height:1.6;color:var(--py);text-shadow:2px 2px 0 var(--pr)}
+:root.pixel .brand-name small{color:#fbf3e2;text-shadow:none;font-size:10px}
+:root.pixel .tb-btn{--pc:#04263d;background:var(--py);color:var(--ink)}
+:root.pixel .tb-btn .badge{background:var(--pr);border:2px solid var(--ink);border-radius:0}
+:root.pixel .tb-nav a{color:#fbf3e2;border-radius:0}
+:root.pixel .tb-nav a.on,:root.pixel .tb-nav a:hover{background:var(--py);color:var(--ink)}
+:root.pixel .demo-bar{background:var(--py);color:var(--ink);border:0}
+:root.pixel .demo-bar a{color:var(--pr)}
+:root.pixel .announce{background:var(--pr);color:#fbf3e2;font-weight:700}
+@media (max-width:480px){:root.pixel .brand-name{font-size:9.5px}:root.pixel .brand-name small{font-size:9.5px}}
+
+/* البطل: مثل ملصق «PRESS START» */
+:root.pixel .hero{--pc:var(--ink);background:var(--pb);color:#fbf3e2;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40' shape-rendering='crispEdges'%3E%3Cg fill='%23fbf3e2'%3E%3Cpath d='M8 4h1v1H8zM7 5h3v1H7zM5 6h7v1H5zM6 7h5v1H6zM6 8h2v1H6zM9 8h2v1H9z'/%3E%3Cpath d='M4 24h1v1H4zM3 25h3v1H3zM1 26h7v1H1zM2 27h5v1H2zM2 28h2v1H2zM5 28h2v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:360px 240px;background-repeat:no-repeat;background-position:left 10px top 10px}
+:root.pixel .hero::after{display:none}
+:root.pixel .hero h1{font-family:var(--pixel);font-style:normal;font-weight:400;font-size:22px;line-height:1.5;letter-spacing:1px}
+:root.pixel .hero h1 span{display:block;text-shadow:4px 4px 0 #04263d}
+:root.pixel .hero h1 span:nth-child(1){color:var(--py)}
+:root.pixel .hero h1 span:nth-child(2){color:var(--po)}
+:root.pixel .hero h1 span:nth-child(3){color:var(--pr)}
+:root.pixel .hero p{color:#fbf3e2}
+:root.pixel .hero-art{animation:spin 2.4s steps(8) infinite}
+:root.pixel .hero-art svg{filter:drop-shadow(6px 6px 0 rgba(4,38,61,.6));image-rendering:pixelated}
+@media (min-width:700px){:root.pixel .hero h1{font-size:34px}}
+
+/* أزرار بكسل: كتلة صلبة، حد مدرّج، ضوء أعلى وظل أسفل، تنضغط عند اللمس */
+:root.pixel .btn{--bc:var(--card);--tc:var(--ink);border:0;border-radius:0;background:var(--bc);color:var(--tc);margin:var(--px);
+  box-shadow:0 calc(-1*var(--px)) 0 0 var(--ink),0 var(--px) 0 0 var(--ink),calc(-1*var(--px)) 0 0 0 var(--ink),var(--px) 0 0 0 var(--ink),
+    inset 0 -5px 0 0 rgba(0,0,0,.25),inset 0 4px 0 0 rgba(255,255,255,.35),calc(var(--px) + 4px) calc(var(--px) + 4px) 0 0 rgba(11,46,72,.3);
+  text-shadow:none;transition:none}
+:root.pixel .btn:active{transform:translate(3px,3px);
+  box-shadow:0 calc(-1*var(--px)) 0 0 var(--ink),0 var(--px) 0 0 var(--ink),calc(-1*var(--px)) 0 0 0 var(--ink),var(--px) 0 0 0 var(--ink),inset 0 5px 0 0 rgba(0,0,0,.25)}
+:root.pixel .btn-primary{--bc:var(--pr);--tc:#fbf3e2}
+:root.pixel .btn-gold{--bc:var(--py);--tc:var(--ink)}
+:root.pixel .btn-ghost{--bc:var(--card);--tc:var(--ink)}
+:root.pixel .btn-danger{--bc:var(--danger-soft);--tc:var(--pr)}
+:root.pixel .hero .btn-ghost{--bc:var(--pt);--tc:#fbf3e2}
+
+/* حقول وأقسام */
+:root.pixel .input{background:var(--card)}
+:root.pixel .input:focus{--pc:var(--pt)}
+:root.pixel select.input{background-image:none}
+:root.pixel .section h2{font-size:19px}
+:root.pixel .section h2::after{width:96px;height:6px;margin-top:6px;
+  background:linear-gradient(90deg,var(--po) 0 16.6%,var(--py) 0 33.3%,var(--pg) 0 50%,var(--pt) 0 66.6%,var(--pb) 0 83.3%,var(--pr) 0)}
+:root.pixel .section a{color:var(--pr)}
+:root.pixel .cat:nth-child(1) .ic{color:var(--pr)}
+:root.pixel .cat:nth-child(2) .ic{color:var(--po)}
+:root.pixel .tab.on{background:var(--pb);color:var(--py)}
+
+/* بطاقات المنتجات: خلفية الصورة تتنقّل بين ألوان اللوحة */
+:root.pixel .pcard{background:var(--card);overflow:visible}
+:root.pixel .pcard:hover{transform:translate(-2px,-2px)}
+:root.pixel .pcard-img{--cbg:var(--po);background:var(--cbg);border-bottom:var(--px) solid var(--ink)}
+:root.pixel .grid .pcard:nth-child(6n+2) .pcard-img{--cbg:var(--py)}
+:root.pixel .grid .pcard:nth-child(6n+3) .pcard-img{--cbg:var(--pg)}
+:root.pixel .grid .pcard:nth-child(6n+4) .pcard-img{--cbg:var(--pt)}
+:root.pixel .grid .pcard:nth-child(6n+5) .pcard-img{--cbg:var(--pb)}
+:root.pixel .grid .pcard:nth-child(6n+6) .pcard-img{--cbg:var(--pr)}
+:root.pixel .pcard-img .px-art{padding:12%;image-rendering:pixelated;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.3))}
+:root.pixel .gallery-main{border-radius:0;border:var(--px) solid var(--ink);background:var(--pt)}
+:root.pixel .gallery-main .px-art{padding:10%}
+:root.pixel .thumb{border-radius:0;background:var(--pt)}
+:root.pixel .pcard-body .kind{color:var(--pt)}
+:root.pixel .pcard-body .price{color:var(--pr)}
+:root.pixel .grade{font-family:var(--pixel);font-size:8px;padding:4px 6px;border-radius:0;background:var(--py);color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+:root.pixel .sold-tag{border-radius:0;font-family:var(--pixel);font-size:10px;box-shadow:3px 3px 0 var(--ink)}
+:root.pixel .pill{border-radius:0}
+
+/* الشريط السفلي والنوافذ */
+:root.pixel #bottomnav{background:var(--pb);border-top:0;box-shadow:none}
+:root.pixel #bottomnav::before{content:"";position:absolute;top:-9px;inset-inline:0;height:9px;
+  background:linear-gradient(var(--pt) 0 3px,var(--pg) 3px 6px,var(--py) 6px 9px)}
+:root.pixel #bottomnav a{color:#cfe0ea}
+:root.pixel #bottomnav a.on{color:var(--py)}
+:root.pixel #bottomnav a .badge{border-radius:0;background:var(--pr)}
+:root.pixel .sheet-box{border-radius:0;box-shadow:0 -6px 0 var(--ink)}
+:root.pixel #toast{border-radius:0;background:var(--ink);box-shadow:4px 4px 0 var(--pr)}
+:root.pixel .foot .latin{font-family:var(--pixel);font-style:normal;font-size:11px;color:var(--pr)}
+@media (prefers-reduced-motion:reduce){:root.pixel .hero-art{animation:none}}
