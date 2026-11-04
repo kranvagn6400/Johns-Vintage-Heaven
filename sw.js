@@ -1,6 +1,6 @@
 // عامل الخدمة: يحفظ ملفات الموقع ليفتح بسرعة وحتى مع ضعف الإنترنت
 // غيّر رقم الإصدار CACHE عند أي تعديل على ملفات JS/CSS/HTML
-const CACHE = 'jvh-v1';
+const CACHE = 'jvh-v2';
 const ASSETS = ['./', './index.html', './config.js', './css/app.css', './js/util.js', './js/ui.js', './js/api.js', './js/demo.js',
   './js/shop.js', './js/seller.js', './js/owner.js', './js/admin.js', './js/app.js',
   './fonts/kufi-arabic.woff2', './fonts/kufi-latin.woff2', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];

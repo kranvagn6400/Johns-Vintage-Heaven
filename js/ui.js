@@ -58,7 +58,7 @@ const UI = {
       ${bare ? '' : '<rect width="200" height="200" fill="var(--art-bg)"/>'}
       <circle cx="100" cy="100" r="84" fill="#17110c"/>
       ${[74, 66, 58, 50, 42].map(r => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.2"/>`).join('')}
-      <path d="M40 60 A84 84 0 0 1 100 16" stroke="rgba(255,255,255,.16)" stroke-width="10" fill="none"/>
+      <path d="M46.3 46.3 A76 76 0 0 1 100 24" stroke="rgba(255,255,255,.16)" stroke-width="8" fill="none" stroke-linecap="round"/>
       <circle cx="100" cy="100" r="30" fill="${c}"/><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
       <circle cx="100" cy="100" r="3.5" fill="#f3e8d2"/></svg>`;
   },
