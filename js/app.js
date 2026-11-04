@@ -45,7 +45,7 @@ const App = {
       cart: () => Shop.cart(view), checkout: () => Shop.checkout(view), done: () => Shop.done(view, seg[1]),
       track: () => Shop.track(view), orders: () => this.need(['customer', 'seller', 'owner', 'admin']) && Shop.myOrders(view),
       login: () => this.auth(view, 'login'), signup: () => this.auth(view, 'signup'), account: () => this.account(view),
-      seller: () => this.need(['seller']) && Seller.route(view, seg.slice(1)),
+      seller: () => this.need(['seller', 'owner', 'admin']) && Seller.route(view, seg.slice(1)),
       owner: () => this.need(['owner', 'admin']) && Owner.route(view),
       admin: () => this.need(['admin']) && Admin.route(view)
     }[seg[0] || ''];
@@ -169,6 +169,7 @@ const App = {
         ${me.role === 'admin' ? `<a class="row row-click" href="#/owner">${icon('chart')}<span class="grow"><b>إدارة المتجر</b><div class="sub">الطلبات، البائعون، رسوم التوصيل</div></span>${icon('next')}</a>` : ''}
         <a class="row row-click" href="#/orders">${icon('receipt')}<span class="grow"><b>طلباتي</b></span>${icon('next')}</a>
         <a class="row row-click" href="#/track">${icon('truck')}<span class="grow"><b>تتبّع طلب برمزه</b></span>${icon('next')}</a>
+        ${['owner', 'admin'].includes(me.role) ? `<a class="row row-click" href="#/seller">${icon('disc')}<span class="grow"><b>منتجاتي</b><div class="sub">أضف وعدّل منتجات المتجر وصورها</div></span>${icon('next')}</a>` : ''}
         ${me.role === 'customer' ? `<a class="row row-click" href="#" data-become-seller>${icon('store')}<span class="grow"><b>أريد أن أبيع</b><div class="sub">اعرض أسطواناتك وغرامافوناتك في المتجر</div></span>${icon('next')}</a>` : ''}
       </div></div></div><div>
       <div class="card"><h3>بياناتي</h3><form id="meForm" class="stack">

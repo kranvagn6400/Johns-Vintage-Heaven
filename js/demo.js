@@ -22,7 +22,14 @@ const DemoAPI = {
   role() { const p = this.prof(this.uidNow()); return p ? p.role : null; },
   isStaff() { return ['owner', 'admin'].includes(this.role()); },
   isAdmin() { return this.role() === 'admin'; },
-  approved(id) { const s = this.db.sellers.find(x => x.id === id); const p = this.prof(id); return !!(s && p && s.status === 'approved' && p.role === 'seller'); },
+  approved(id) { const s = this.db.sellers.find(x => x.id === id); const p = this.prof(id); return !!(s && p && s.status === 'approved' && ['seller', 'owner', 'admin'].includes(p.role)); },
+  async ensureShop() {
+    if (!this.isStaff()) this.deny();
+    const me = this.uidNow(), s = this.db.sellers.find(x => x.id === me);
+    if (s) s.status = 'approved';
+    else this.db.sellers.push({ id: me, shop_name: BRAND, bio: '', status: 'approved', commission_rate: 0, created_at: new Date().toISOString() });
+    this.save(); return this.restore();
+  },
   deny() { throw new Error('ليست لديك صلاحية لهذه العملية'); },
   clone: x => JSON.parse(JSON.stringify(x)),
 

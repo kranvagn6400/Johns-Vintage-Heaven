@@ -177,6 +177,8 @@ const SupaAPI = {
     return this.rpc('set_order_status', { p_order: id, p_status: status, p_note: note, p_courier_ref: courier_ref });
   },
   sellerOrders() { return this.rpc('seller_orders'); },
+  // صاحب المتجر والمشرف: متجر معتمد باسم المتجر ليضيفا منتجاتهما
+  async ensureShop() { await this.rpc('ensure_staff_shop'); return this.restore(); },
   allOrders({ status } = {}) {
     return this.get('orders', `select=*,items:order_items(*,seller:sellers(shop_name)),events:order_events(*)${status ? '&status=eq.' + status : ''}&order=created_at.desc&limit=500`);
   },

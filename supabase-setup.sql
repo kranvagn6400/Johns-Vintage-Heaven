@@ -160,7 +160,7 @@ $$;
 create or replace function public.is_approved_seller(uid uuid) returns boolean
 language sql stable security definer set search_path = public as $$
   select exists (select 1 from sellers s join profiles p on p.id = s.id
-                 where s.id = uid and s.status = 'approved' and p.role = 'seller')
+                 where s.id = uid and s.status = 'approved' and p.role in ('seller', 'owner', 'admin'))
 $$;
 
 -- ---------- إنشاء الملف الشخصي عند التسجيل ----------
@@ -400,6 +400,18 @@ returns json language sql stable security definer set search_path = public as $$
   ) x
 $$;
 grant execute on function public.seller_orders() to authenticated;
+
+-- ---------- منتجات الإدارة: صاحب المتجر والمشرف يبيعان منتجاتهما أيضاً ----------
+-- يُنشئ لهما «متجراً» معتمداً باسم المتجر عند أول فتح للوحة المنتجات (products.seller_id يحتاج صفاً في sellers).
+create or replace function public.ensure_staff_shop()
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not is_staff() then raise exception 'ليست لديك صلاحية لهذه العملية'; end if;
+  insert into sellers (id, shop_name, status, reviewed_by, reviewed_at)
+  values (auth.uid(), 'Johns Vintage Heaven', 'approved', auth.uid(), now())
+  on conflict (id) do update set status = 'approved';
+end $$;
+grant execute on function public.ensure_staff_shop() to authenticated;
 
 -- ---------- صور المنتجات ----------
 -- bucket عام للقراءة (صور المتجر تُعرض للجميع). المسار: <seller_id>/<product_id>/<n>.jpg

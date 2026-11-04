@@ -6,7 +6,7 @@ const Owner = {
     const tab = App.params.get('tab') || 'orders';
     const head = `<div class="page-head"><h1>إدارة المتجر</h1></div>
       <div class="tabs">${[['orders', 'الطلبات', 'receipt'], ['sellers', 'البائعون', 'users'], ['fees', 'رسوم التوصيل', 'truck'], ['sales', 'المبيعات', 'chart']]
-        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}</div><div id="ownerBody">${UI.loading()}</div>`;
+        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}<a class="tab" href="#/seller">${icon('disc')} منتجاتي</a></div><div id="ownerBody">${UI.loading()}</div>`;
     view.innerHTML = head;
     const body = $('#ownerBody');
     ({ orders: () => this.ordersTab(body), sellers: () => this.sellersTab(body), fees: () => this.feesTab(body), sales: () => this.salesTab(body) }[tab] || (() => this.ordersTab(body)))();
@@ -88,6 +88,7 @@ const Owner = {
     let rows;
     try { rows = await API.sellers(); } catch (e) { body.innerHTML = UI.error(e); return; }
     const order = { pending: 0, approved: 1, suspended: 2, rejected: 3 };
+    rows = rows.filter(s => !s.profile || s.profile.role === 'seller');   // متجر صاحب المتجر/المشرف ليس بائعاً للمراجعة
     rows.sort((a, b) => order[a.status] - order[b.status]);
     body.innerHTML = rows.length ? `<div class="list">${rows.map(s => `<div class="row" style="flex-wrap:wrap">
         <div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--gold)">${icon('store')}</div>

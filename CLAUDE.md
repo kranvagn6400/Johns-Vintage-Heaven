@@ -23,6 +23,9 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   write products/photos (RLS `is_approved_seller`). Sees only own products and `seller_orders()` (own items,
   no customer phone/address). Seller created by admin is auto-approved.
 - `customer` «زبون»: browse, cart (localStorage `jvh_cart`), checkout, «طلباتي», cancel own order while `new`.
+- Owner and admin also sell their own products: «منتجاتي» (#/seller, tabs in إدارة المتجر / لوحة المشرف / حسابي) calls
+  `API.ensureShop()` → RPC `ensure_staff_shop` (approved `sellers` row named Johns Vintage Heaven). `is_approved_seller` accepts
+  role seller|owner|admin. Staff shops are hidden from the owner's «البائعون» review list.
 - `disabled`: blocked at login.
 - Guest checkout is allowed; guests track with code + phone (`track_order` RPC).
 

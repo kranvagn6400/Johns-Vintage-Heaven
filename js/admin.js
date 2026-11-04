@@ -7,6 +7,7 @@ const Admin = {
     view.innerHTML = `<div class="page-head"><h1>لوحة المشرف</h1></div>
       <div class="tabs">${[['users', 'الحسابات', 'users'], ['settings', 'إعدادات المتجر', 'settings'], ['system', 'النظام', 'shield']]
         .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/admin?tab=${k}">${icon(ic)} ${l}</a>`).join('')}
+        <a class="tab" href="#/seller">${icon('disc')} منتجاتي</a>
         <a class="tab" href="#/owner">${icon('chart')} إدارة المتجر</a></div><div id="adminBody">${UI.loading()}</div>`;
     const body = $('#adminBody');
     ({ users: () => this.users(body), settings: () => this.settings(body), system: () => this.system(body) }[tab] || (() => this.users(body)))();

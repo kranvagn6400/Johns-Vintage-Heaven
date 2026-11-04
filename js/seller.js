@@ -1,7 +1,12 @@
 'use strict';
 /* ================= لوحة البائع: منتجاتي، إضافة/تعديل منتج، طلبات منتجاتي ================= */
 const Seller = {
-  route(view, seg) {
+  staff: () => ['owner', 'admin'].includes(API.me.role),
+  async route(view, seg) {
+    if (this.staff() && !(API.me.seller && API.me.seller.status === 'approved')) {
+      view.innerHTML = UI.loading();
+      try { await API.ensureShop(); } catch (e) { view.innerHTML = UI.error(e); return; }
+    }
     const s = API.me.seller;
     if (!s || s.status !== 'approved') return this.waiting(view, s);
     if (seg[0] === 'new') return this.form(view, null);
@@ -21,7 +26,7 @@ const Seller = {
       <button class="btn btn-ghost" style="margin-top:14px" onclick="App.route()">تحديث الحالة</button></div></div>`;
   },
   head(active) {
-    return `<div class="page-head"><h1>لوحة البائع</h1><span class="sp"></span><a class="btn btn-primary btn-sm" href="#/seller/new">${icon('plus')} منتج جديد</a></div>
+    return `<div class="page-head"><h1>${this.staff() ? 'منتجاتي' : 'لوحة البائع'}</h1><span class="sp"></span><a class="btn btn-primary btn-sm" href="#/seller/new">${icon('plus')} منتج جديد</a></div>
       <div class="tabs"><a class="tab ${active === 'products' ? 'on' : ''}" href="#/seller">منتجاتي</a><a class="tab ${active === 'orders' ? 'on' : ''}" href="#/seller/orders">طلبات منتجاتي</a></div>`;
   },
   async home(view) {
