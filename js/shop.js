@@ -7,7 +7,7 @@ const Shop = {
     view.innerHTML = `<section class="hero">
         <div><h1><span>Johns</span> <span>Vintage</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p>
           <div class="row-btns"><a class="btn btn-gold" href="#/shop?kind=record">${icon('disc')} تصفّح الأسطوانات</a>
-          <a class="btn btn-ghost" href="#/shop?kind=gramophone">الغرامافونات</a></div></div>
+          <a class="btn btn-px" href="#/shop?kind=gramophone">${Pixel.icon('gramophone')} الغرامافونات</a></div></div>
         <div class="hero-art">${UI.art({ id: 'hero', kind: 'record' }, true)}</div>
       </section>
       <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان، ألبوم، أو ماركة غرامافون…" enterkeyhint="search">
@@ -22,8 +22,6 @@ const Shop = {
       <div id="gramos">${UI.loading()}</div>
       <div class="dash-grid" style="margin-top:26px">
         <div class="card"><h3>${icon('truck')} توصيل لكل العراق</h3><p class="muted small">التوصيل لكل المحافظات عبر شركة توصيل معتمدة، والدفع نقداً عند الاستلام.</p></div>
-        <div class="card"><h3>${icon('store')} عندك مقتنيات قديمة؟</h3><p class="muted small">سجّل كبائع واعرض أسطواناتك وغرامافوناتك لمحبّي الزمن الجميل.</p>
-          <a class="btn btn-ghost btn-sm" style="margin-top:10px" href="#/signup?seller=1">سجّل كبائع</a></div>
       </div>
       ${this.footer()}`;
     $('#homeSearch').onsubmit = e => { e.preventDefault(); App.go('#/shop?q=' + encodeURIComponent($('#hq').value.trim())); };
@@ -36,7 +34,7 @@ const Shop = {
   footer() {
     const s = App.settings;
     return `<footer class="foot"><div class="latin">${BRAND}</div>
-      <div>${s.contact_phone ? `للتواصل: <span class="num">${esc(s.contact_phone)}</span> · ` : ''}<a href="#/track">تتبّع طلبك</a> · <a href="#/signup?seller=1">البيع معنا</a></div></footer>`;
+      <div>${s.contact_phone ? `للتواصل: <span class="num">${esc(s.contact_phone)}</span>` : ''}</div></footer>`;
   },
 
   /* ---------- المتجر: بحث وتصفية ---------- */
@@ -114,8 +112,8 @@ const Shop = {
     const sold = p.status !== 'active' || p.stock < 1;
     const rec = p.kind === 'record';
     const specs = rec ? [['الفنان', p.artist], ['الألبوم', p.album], ['السنة', p.year], ['النوع', p.genre], ['السرعة', p.speed && p.speed + ' لفة'],
-      ['الحجم', p.size && p.size + ' إنش'], ['الحالة', p.condition && RECORD_GRADES[p.condition]]]
-      : [['الماركة', p.brand], ['الموديل', p.model], ['الحالة', GRAMO_GRADES[p.condition]], ['يعمل؟', p.working === true ? 'نعم، يعمل' : p.working === false ? 'لا يعمل' : '']];
+      ['الحجم', p.size && p.size + ' إنش']]
+      : [['الماركة', p.brand], ['الموديل', p.model]];
     const photos = p.photos || [];
     view.innerHTML = `<div class="page-head"><button class="back-btn" onclick="history.length > 1 ? history.back() : App.go('#/shop')" aria-label="رجوع">${icon('back')}</button>
         <span class="muted small">${KIND_NAMES[p.kind]}</span></div>
@@ -129,11 +127,10 @@ const Shop = {
           ${sold ? '<div class="notice bad">' + icon('info') + '<span>هذه القطعة بيعت.</span></div>' : `
             <div class="row-btns" style="align-items:center">
               ${p.stock > 1 ? `<div class="qty"><button type="button" data-q="1" aria-label="زيادة">${icon('plus')}</button><span id="pq">1</span><button type="button" data-q="-1" aria-label="إنقاص">${icon('minus')}</button></div>` : ''}
-              <button class="btn btn-primary" id="addCart" style="flex:1">${icon('cart')} أضف إلى السلة</button></div>
-            <p class="hint">${p.stock > 1 ? `متوفر: ${p.stock} قطع` : 'قطعة واحدة فقط'} · الدفع عند الاستلام</p>`}
+              <button class="btn btn-primary" id="addCart" style="flex:1">${icon('cart')} أضف إلى السلة</button></div>`}
           <div class="pd-specs">${specs.filter(x => x[1]).map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join('')}</div>
           ${p.description ? `<h3 style="font-size:15px;margin-bottom:6px">الوصف</h3><p style="white-space:pre-line">${esc(p.description)}</p>` : ''}
-          ${p.seller ? `<div class="seller-box">${icon('store')}<div><small class="muted">البائع</small><div><b>${esc(p.seller.shop_name)}</b></div>${p.seller.bio ? `<div class="small muted">${esc(p.seller.bio)}</div>` : ''}</div></div>` : ''}
+          
         </div></div>
       <div id="related"></div>`;
     $$('[data-g]', view).forEach(b => b.onclick = () => { $('#gMain').innerHTML = UI.photo(p, +b.dataset.g); $$('[data-g]', view).forEach(x => x.classList.toggle('on', x === b)); });

@@ -69,12 +69,12 @@ const UI = {
   },
   meta(p) {
     if (p.kind === 'record') return [p.artist, p.year, p.speed && `${p.speed} لفة`].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
-    return [p.brand, p.model, p.working === true ? 'يعمل' : p.working === false ? 'لا يعمل' : ''].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
+    return [p.brand, p.model].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
   },
   card(p) {
     const sold = p.status === 'sold' || p.stock < 1;
     return `<a class="pcard ${sold ? 'is-sold' : ''}" href="#/p/${esc(p.id)}">
-      <div class="pcard-img">${this.photo(p)}<span class="grade" title="${esc(gradeLong(p))}">${esc(gradeName(p))}</span>${sold ? '<span class="sold-tag">مُباع</span>' : ''}</div>
+      <div class="pcard-img">${this.photo(p)}${sold ? '<span class="sold-tag">مُباع</span>' : ''}</div>
       <div class="pcard-body">
         <span class="kind">${KIND_NAMES[p.kind]}</span>
         <h3>${esc(p.title)}</h3>

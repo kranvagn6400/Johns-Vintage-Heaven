@@ -13,8 +13,6 @@ const App = {
     UI.hydrate();
     if (API.mode === 'demo') {
       DemoAPI.load();
-      const bar = $('#demoBar'); bar.classList.remove('hidden');
-      bar.innerHTML = 'وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. <a href="#/login">جرّب الأدوار الأربعة</a>';
     }
     try { await API.restore(); if (API.me && API.me.role === 'disabled') await API.signOut(); } catch (e) { console.warn(e); }
     this.loadSettings();

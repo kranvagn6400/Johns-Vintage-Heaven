@@ -12,6 +12,7 @@ const DemoAPI = {
   load() {
     this.db = store.get('demo_db', null);
     if (!this.db || this.db.v !== 1) { this.db = demoSeed(); this.save(); }
+    if (this.db.settings.announcement === 'التوصيل لكل محافظات العراق — الدفع عند الاستلام') { this.db.settings.announcement = ''; this.save(); }
   },
   save() { if (!store.set('demo_db', this.db)) throw new Error('امتلأت ذاكرة المتصفح: احذف بعض الصور التجريبية أو أعد ضبط البيانات'); },
   reset() { store.del('demo_db'); store.del('demo_session'); this.session = null; this.me = null; this.load(); },
@@ -281,7 +282,7 @@ function demoSeed() {
   O('o-1', 'JV4F2A91', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-14'], 'delivered', 6, 'CR-10293');
   O('o-2', 'JV7B0C33', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-15', 'p-3'], 'with_courier', 1, 'CR-10377');
   O('o-3', 'JV19E5D0', null, 'مصطفى جاسم', '07801234567', 'البصرة', 'العشار، شارع الكويت', ['p-2'], 'new', 0.2);
-  const settings = { tagline: 'أسطوانات وغرامافونات من الزمن الجميل', announcement: 'التوصيل لكل محافظات العراق — الدفع عند الاستلام',
+  const settings = { tagline: 'أسطوانات وغرامافونات من الزمن الجميل', announcement: '',
     contact_phone: '07700000002', courier_name: 'شركة التوصيل' };
   const fees = GOVERNORATES.map(g => ({ governorate: g, fee: g === 'بغداد' ? 5000 : ['بابل', 'كربلاء', 'النجف', 'واسط', 'ديالى', 'القادسية'].includes(g) ? 7000 : 8000, active: true }));
   return { v: 1, profiles, sellers, products, orders, order_items, order_events, settings, fees };
