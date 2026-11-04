@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "jvh", "runtimeExecutable": "node", "runtimeArgs": ["server.js", "8091"], "port": 8091 }
+  ]
+}

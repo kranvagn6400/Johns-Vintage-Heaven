@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#241810">
+<meta name="description" content="Johns Vintage Heaven — أسطوانات وغرامافونات من الزمن الجميل، توصيل لكل محافظات العراق والدفع عند الاستلام.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preload" href="fonts/kufi-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/app.css">
+<script>try{var t=localStorage.getItem('jvh_theme');if(t==='"dark"'||t==='"light"')document.documentElement.dataset.theme=JSON.parse(t)}catch(e){}</script>
+<title>Johns Vintage Heaven</title>
+</head>
+<body>
+<header id="topbar">
+  <div class="tb-in">
+    <a class="brand" href="#/">
+      <img class="brand-mark" src="icon.svg" alt="">
+      <span class="brand-name">Johns Vintage Heaven<small>أسطوانات وغرامافونات</small></span>
+    </a>
+    <nav class="tb-nav" id="tbNav"></nav>
+    <div class="tb-actions">
+      <a class="tb-btn tb-search" href="#/shop?focus=1" aria-label="بحث"><i data-i="search"></i></a>
+      <a class="tb-btn" href="#/cart" aria-label="السلة"><i data-i="cart"></i><span class="badge hidden" id="cartBadge"></span></a>
+      <a class="tb-btn" href="#/account" aria-label="حسابي"><i data-i="user"></i></a>
+    </div>
+  </div>
+</header>
+<div id="demoBar" class="demo-bar hidden"></div>
+<div id="announce" class="announce hidden"></div>
+
+<main id="app"></main>
+
+<nav id="bottomnav"></nav>
+
+<div id="sheet" class="sheet">
+  <div class="sheet-bg" onclick="closeSheet()"></div>
+  <div class="sheet-box">
+    <button class="icon-btn sheet-close" type="button" onclick="closeSheet()" aria-label="إغلاق"><i data-i="x"></i></button>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="busy"><div class="bx"><span class="spin-disc"></span><span id="busyText"></span></div></div>
+
+<script src="config.js"></script>
+<script src="js/util.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/api.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/seller.js"></script>
+<script src="js/owner.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

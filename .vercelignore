@@ -1,0 +1,7 @@
+# ملفات المشروع التي ليست جزءاً من الموقع: لا تُنشر
+*.sql
+*.md
+server.js
+tools
+.claude
+.gitignore

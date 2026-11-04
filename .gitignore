@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local env
+.env
+.env.local
+
+# Vercel CLI link / build copies
+.vercel/
+_deploy/
+_test/
+
+# Packaged copies of the app
+*.zip
