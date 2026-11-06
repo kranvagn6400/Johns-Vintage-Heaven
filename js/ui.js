@@ -78,7 +78,7 @@ const UI = {
     return path ? `<img src="${esc(API.photoUrl(path))}" alt="${esc(p.title)}" loading="lazy">` : this.art(p);
   },
   meta(p) {
-    if (isMusic(p.kind)) return [p.artist, p.genre, p.year, p.speed && `${p.speed} لفة`].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
+    if (isMusic(p.kind)) return [p.artist, p.genre, p.year].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
     return [p.brand, p.model].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
   },
   card(p) {
