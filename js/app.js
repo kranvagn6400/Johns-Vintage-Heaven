@@ -43,7 +43,7 @@ const App = {
     const r = {
       '': () => Shop.home(view), shop: () => Shop.list(view), p: () => Shop.product(view, seg[1]),
       cart: () => Shop.cart(view), checkout: () => Shop.checkout(view), done: () => Shop.done(view, seg[1]),
-      track: () => Shop.track(view), orders: () => this.need(['customer', 'owner', 'admin']) && Shop.myOrders(view),
+      track: () => Shop.track(view), orders: () => this.go('#/track'),   // لا حسابات للزبائن: التتبع برمز الطلب
       login: () => this.auth(view, 'login'), signup: () => this.auth(view, 'signup'), account: () => this.account(view),
       seller: () => this.need(['owner', 'admin']) && Seller.route(view, seg.slice(1)),
       owner: () => this.need(['admin']) && Owner.route(view),
@@ -66,6 +66,9 @@ const App = {
     const p = '/' + (this.path.split('/')[1] || ''), kind = this.params.get('kind');
     const on = (cond) => cond ? 'on' : '';
     const dash = this.dashLink();
+    // زر «حسابي» للإدارة فقط (صاحب المتجر والمشرف)؛ الزبون يتسوّق بدون حساب
+    const staff = !!(API.me && ['owner', 'admin'].includes(API.me.role));
+    $('#tbAccount').classList.toggle('hidden', !staff);
     $('#tbNav').innerHTML = [
       ['#/', 'الرئيسية', p === '/'], ['#/shop?kind=record', 'الأسطوانات', p === '/shop' && kind === 'record'],
       ['#/shop?kind=gramophone', 'الغرامافونات', p === '/shop' && kind === 'gramophone'], ['#/track', 'تتبّع طلب', p === '/track'],
@@ -76,7 +79,7 @@ const App = {
       ['#/', 'الرئيسية', 'home', p === '/'], ['#/shop', 'المتجر', 'disc', p === '/shop' || p === '/p'],
       ['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout'],
       ...(dash ? [[dash[0], 'لوحتي', dash[2], p === dash[0].slice(1)]] : []),
-      ['#/account', 'حسابي', 'user', ['/account', '/login', '/signup', '/orders'].includes(p)]
+      staff ? ['#/account', 'حسابي', 'user', ['/account', '/login', '/signup'].includes(p)] : ['#/track', 'تتبّع طلب', 'truck', p === '/track']
     ].map(([h, t, ic, o]) => `<a href="${h}" class="${on(o)}">${icon(ic)}<span>${t}</span>${ic === 'cart' ? '<span class="badge hidden" data-cart></span>' : ''}</a>`).join('');
     this.badges();
   },
@@ -90,21 +93,20 @@ const App = {
     if (API.me) return this.go('#/account');
     const signup = mode === 'signup', asSeller = this.params.get('seller') === '1';
     view.innerHTML = `<div class="auth"><div class="card">
-      <div class="auth-head"><img src="icon.svg" alt="" width="64" height="64" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'تسجيل الدخول'}</h1>
-        <p class="muted small">${signup ? 'تسوّق وتتبّع طلباتك' : 'أهلاً بعودتك إلى ' + '<span class="latin">' + BRAND + '</span>'}</p></div>
+      <div class="auth-head"><img src="icon.svg" alt="" width="64" height="64" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'دخول الإدارة'}</h1>
+        <p class="muted small">${signup ? 'تسوّق وتتبّع طلباتك' : 'لصاحب المتجر والمشرف فقط'}</p></div>
       <form id="authForm" class="stack" novalidate>
         ${signup ? `<div><label class="lbl" for="fName">الاسم الكامل <span class="req">*</span></label><input class="input" id="fName" autocomplete="name" required></div>` : ''}
         <div><label class="lbl" for="fPhone">رقم الهاتف</label><input class="input num" id="fPhone" type="tel" inputmode="numeric" dir="ltr" autocomplete="tel" placeholder="07XXXXXXXXX" maxlength="14" required></div>
         <div><label class="lbl" for="fPass">كلمة المرور</label><input class="input" id="fPass" type="password" dir="ltr" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="6" required>
           ${signup ? '<p class="hint">6 أحرف أو أرقام على الأقل.</p>' : ''}</div>
         <button class="btn btn-primary btn-block" type="submit">${signup ? 'إنشاء الحساب' : 'دخول'}</button>
-        <p class="small muted" style="text-align:center">${signup ? 'لديك حساب؟ <a href="#/login" style="color:var(--wine);font-weight:700">سجّل الدخول</a>' : 'ليس لديك حساب؟ <a href="#/signup" style="color:var(--wine);font-weight:700">أنشئ حساباً</a>'}</p>
+        <p class="small muted" style="text-align:center">${signup ? 'لديك حساب؟ <a href="#/login" style="color:var(--wine);font-weight:700">سجّل الدخول</a>' : 'الزبائن لا يحتاجون حساباً: تسوّق واطلب مباشرة، وتابع طلبك من <a href="#/track" style="color:var(--wine);font-weight:700">تتبّع طلب</a>.'}</p>
       </form>
       ${!signup && API.mode === 'demo' ? `<div class="divider"></div><p class="small muted">الوضع التجريبي — ادخل مباشرة بأحد الأدوار:</p>
         <div class="demo-logins">
-          <button class="btn btn-ghost" data-demo="u-customer">زبون</button><button class="btn btn-ghost" data-demo="u-owner">صاحب المتجر</button>
-          <button class="btn btn-ghost" data-demo="u-admin" style="grid-column:span 2">المشرف التقني</button></div>
-        <p class="hint">أو بالهاتف: المشرف 07700000001 · صاحب المتجر 07700000002 · زبون 07700000006، وكلمة المرور ${DEMO_PASSWORD}</p>` : ''}
+          <button class="btn btn-ghost" data-demo="u-owner">صاحب المتجر</button><button class="btn btn-ghost" data-demo="u-admin">المشرف التقني</button></div>
+        <p class="hint">أو بالهاتف: المشرف 07700000001 · صاحب المتجر 07700000002، وكلمة المرور ${DEMO_PASSWORD}</p>` : ''}
     </div></div>`;
     $('#fPhone').oninput = e => { e.target.value = normPhone(e.target.value).slice(0, 11); };
     $$('[data-demo]', view).forEach(b => b.onclick = async () => {
@@ -138,14 +140,7 @@ const App = {
   /* ---------- حسابي ---------- */
   account(view) {
     const me = API.me;
-    if (!me) {
-      view.innerHTML = `<div class="auth"><div class="card" style="text-align:center">
-        <img src="icon.svg" alt="" width="72" height="72" style="margin:0 auto 10px"><h2>مرحباً بك</h2>
-        <p class="muted small" style="margin:6px 0 16px">سجّل الدخول لمتابعة طلباتك، أو تابع طلبك برمزه بدون حساب.</p>
-        <div class="stack"><a class="btn btn-primary" href="#/login">تسجيل الدخول</a><a class="btn btn-ghost" href="#/signup">إنشاء حساب</a>
-        <a class="btn btn-ghost" href="#/track">${icon('truck')} تتبّع طلب برمز الطلب</a></div></div>${this.themeCard()}</div>`;
-      return this.bindTheme(view);
-    }
+    if (!me) return this.go('#/login');   // «حسابي» للإدارة فقط
     const dash = this.dashLink();
     const seller = me.role === 'seller' ? me.seller : null;   // اسم المتجر ونبذته لا يخصّان صاحب المتجر والمشرف
     view.innerHTML = `<div class="page-head"><h1>حسابي</h1></div>
@@ -158,7 +153,6 @@ const App = {
       <div class="card"><div class="list">
         ${dash ? `<a class="row row-click" href="${dash[0]}">${icon(dash[2])}<span class="grow"><b>${dash[1]}</b></span>${icon('next')}</a>` : ''}
         ${me.role === 'admin' ? `<a class="row row-click" href="#/owner">${icon('chart')}<span class="grow"><b>إدارة المتجر</b><div class="sub">الطلبات، رسوم التوصيل، المبيعات</div></span>${icon('next')}</a>` : ''}
-        <a class="row row-click" href="#/orders">${icon('receipt')}<span class="grow"><b>طلباتي</b></span>${icon('next')}</a>
         <a class="row row-click" href="#/track">${icon('truck')}<span class="grow"><b>تتبّع طلب برمزه</b></span>${icon('next')}</a>
         ${me.role === 'admin' ? `<a class="row row-click" href="#/seller">${icon('disc')}<span class="grow"><b>منتجاتي</b><div class="sub">أضف وعدّل منتجات المتجر وصورها</div></span>${icon('next')}</a>` : ''}
       </div></div></div><div>

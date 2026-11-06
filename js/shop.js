@@ -212,7 +212,7 @@ const Shop = {
           <div class="pay-opt on">${icon('receipt')}<div><b>${PAYMENT_METHODS.cod}</b><small>ادفع نقداً للمندوب عند استلام طلبك</small></div></div>
           <div class="pay-opt off">${icon('phone')}<div><b>الدفع الإلكتروني</b><small>زين كاش · فاست باي · كي كارد — قريباً</small></div></div>
         </div>
-        ${!me ? `<p class="hint">${icon('info')} تطلب بدون حساب؟ لا مشكلة — احتفظ برمز الطلب لتتبّعه. <a href="#/login" style="color:var(--wine)">أو سجّل الدخول</a></p>` : ''}
+        <p class="hint">${icon('info')} لا تحتاج حساباً. بعد الطلب يظهر لك رمز الطلب، احتفظ به لتتبّع طلبك.</p>
       </form>
       <div class="card summary"><h3>طلبك</h3>
         ${lines.map(({ p, qty }) => `<div class="sum-line"><span>${esc(p.title)}${qty > 1 ? ` × ${qty}` : ''}</span><span>${fmtIQD(p.price * qty)}</span></div>`).join('')}
@@ -261,8 +261,7 @@ const Shop = {
       <div class="dash-grid"><div class="card"><form id="tForm" class="stack">
         <div><label class="lbl" for="tCode">رمز الطلب</label><input class="input num" id="tCode" dir="ltr" placeholder="JV1A2B3C" value="${esc(last.code || '')}" autocapitalize="characters"></div>
         <div><label class="lbl" for="tPhone">رقم الهاتف المستخدم في الطلب</label><input class="input num" id="tPhone" type="tel" inputmode="numeric" dir="ltr" maxlength="11" value="${esc(last.phone || '')}"></div>
-        <button class="btn btn-primary" type="submit">${icon('search')} عرض حالة الطلب</button></form>
-        ${API.me ? '<p class="hint" style="margin-top:10px">طلباتك المسجّلة بحسابك تجدها في <a href="#/orders" style="color:var(--wine)">طلباتي</a>.</p>' : ''}</div>
+        <button class="btn btn-primary" type="submit">${icon('search')} عرض حالة الطلب</button></form></div>
       <div id="tResult"></div></div>`;
     const run = async () => {
       const code = $('#tCode').value.trim(), phone = $('#tPhone').value;
