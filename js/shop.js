@@ -143,7 +143,7 @@ const Shop = {
       Cart.add(p.id, q, p.stock);
       openSheet(`<div style="text-align:center;padding:6px 0"><div class="success" style="padding:8px"><div class="seal">${icon('check')}</div>
         <h2 style="padding:0">أُضيف إلى السلة</h2><p class="muted">${esc(p.title)}</p></div>
-        <div class="row-btns"><a class="btn btn-primary" href="#/cart">إتمام الطلب</a><button class="btn btn-ghost" onclick="closeSheet()">متابعة التسوّق</button></div></div>`, 'sheet-sm');
+        <div class="row-btns"><a class="btn btn-primary" href="#/cart">إتمام الطلب</a><a class="btn btn-ghost" href="#/shop?kind=${p.kind}">متابعة التسوّق</a></div></div>`, 'sheet-sm');
     };
     try {
       const r = await API.products({ kind: p.kind, ...(rec && p.artist ? { artist: p.artist } : {}), limit: 5 });

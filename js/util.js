@@ -92,10 +92,15 @@ const SIZES = [7, 10, 12];
 const GOVERNORATES = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'السليمانية', 'دهوك', 'كركوك', 'الأنبار', 'ديالى', 'صلاح الدين',
   'بابل', 'كربلاء', 'النجف', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'حلبجة'];
 
-/* ---------- السلة (في المتصفح) ---------- */
+/* ---------- السلة (في المتصفح) ----------
+   لكل حساب سلّته على نفس الجهاز: الزائر بدون حساب ← jvh_cart، ومن سجّل الدخول ← jvh_cart_<id>.
+   فلا يرى صاحب المتجر أو المشرف سلة زبون استخدم نفس المتصفح، والعكس. */
 const Cart = {
-  items: store.get('cart', []),   // [{id, qty}]
-  save() { store.set('cart', this.items); document.dispatchEvent(new CustomEvent('cart')); },
+  _key: null, _items: [],   // [{id, qty}]
+  get key() { return (typeof API !== 'undefined' && API.me) ? 'cart_' + API.me.id : 'cart'; },
+  get items() { if (this._key !== this.key) { this._key = this.key; this._items = store.get(this._key, []); } return this._items; },
+  set items(v) { this.items; this._items = v; },
+  save() { store.set(this.key, this._items); document.dispatchEvent(new CustomEvent('cart')); },
   count() { return this.items.reduce((s, x) => s + x.qty, 0); },
   qty(id) { const x = this.items.find(i => i.id === id); return x ? x.qty : 0; },
   add(id, qty = 1, max = 99) {
