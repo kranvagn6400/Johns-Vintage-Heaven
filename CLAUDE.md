@@ -26,7 +26,10 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   ALL store products (`myProducts` drops the seller filter for them).
 - SQL: `is_staff()` now means admin only; `can_edit_products()` = owner|admin (products RLS, storage policies, ensure_staff_shop).
   Demo mirrors this with `isStaff()` (admin) and `canEdit()` (owner|admin); demo DB version 2 (no seller accounts).
-- `customer` «زبون»: browse, cart (localStorage `jvh_cart`), checkout, «طلباتي», cancel own order while `new`.
+- Customers have NO accounts (user's decision 2026-11-06): they browse, use the cart (localStorage `jvh_cart`), check out as
+  guests and track with order code + phone. «حسابي» (top `#tbAccount` + bottom nav) shows only for owner/admin; guests get
+  «تتبّع طلب» there instead. Staff log in at `#/login` («دخول الإدارة», not linked for customers). `#/signup` stays reachable
+  only by URL (bootstrap of the first admin); `#/orders` redirects to `#/track`. The `customer` role still exists in the DB.
 - `disabled`: blocked at login. Guest checkout is allowed; guests track with code + phone (`track_order` RPC).
 - Supabase is LIVE (config.js filled, commit 61f67bd). Test in demo mode only: serve a copy with an empty config.js on
   another port (never let tests write to the live project). SQL changes must be re-run by the user in the SQL editor.
