@@ -66,7 +66,7 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
 - Never put personal data (phone, address) in URLs; tracking uses a form.
 
 ## Design
-Vintage: paper cream `--paper`, wine `--wine`, brass `--gold`, espresso header; Georgia/serif italic for the
+Logo palette (2026-11-06): cream `--paper`, orange buttons `--wine`, mustard `--gold`/`--gold-2`, navy header/hero `--espresso`, rust `--danger` (old variable names kept); Georgia/serif italic for the
 English brand, Kufi (OFL, fonts/) for Arabic. Light/dark tokens on `:root` (auto + manual in حسابي).
 Sample style (not default): `?pixel=1` adds class `pixel` on <html> (saved in localStorage `jvh_style`, `?pixel=0` off) →
 css/pixel.css (arcade-poster look, palette #F3620F #FFC20A #67944B #078D8C #084973 #DA0D1E as --po/--py/--pg/--pt/--pb/--pr;
