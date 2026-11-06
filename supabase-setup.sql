@@ -34,7 +34,7 @@ create table if not exists public.sellers (
 create table if not exists public.products (
   id           uuid primary key default gen_random_uuid(),
   seller_id    uuid not null references public.sellers(id) on delete cascade,
-  kind         text not null check (kind in ('record', 'gramophone')),
+  kind         text not null check (kind in ('record', 'gramophone', 'cd')),
   title        text not null,
   description  text not null default '',
   price        integer not null check (price >= 0),          -- بالدينار العراقي
@@ -58,6 +58,9 @@ create table if not exists public.products (
 );
 create index if not exists products_list on public.products (status, created_at desc);
 create index if not exists products_seller on public.products (seller_id, created_at desc);
+-- أنواع المنتجات: أسطوانة، غرامافون، CD. السطران التاليان يحدّثان القيد في قاعدة أُنشئت قبل إضافة الـ CD
+alter table public.products drop constraint if exists products_kind_check;
+alter table public.products add constraint products_kind_check check (kind in ('record', 'gramophone', 'cd'));
 
 -- رسوم التوصيل لكل محافظة (يحددها صاحب المتجر)
 create table if not exists public.delivery_fees (

@@ -11,7 +11,7 @@ const DemoAPI = {
 
   load() {
     this.db = store.get('demo_db', null);
-    if (!this.db || this.db.v !== 2) { this.db = demoSeed(); this.save(); }
+    if (!this.db || this.db.v !== 3) { this.db = demoSeed(); this.save(); }
     if (this.db.settings.announcement === 'التوصيل لكل محافظات العراق — الدفع عند الاستلام') { this.db.settings.announcement = ''; this.save(); }
   },
   save() { if (!store.set('demo_db', this.db)) throw new Error('امتلأت ذاكرة المتصفح: احذف بعض الصور التجريبية أو أعد ضبط البيانات'); },
@@ -254,13 +254,13 @@ function demoSeed() {
   const products = [
     R('u-owner', 'أم كلثوم — إنت عمري', 'أم كلثوم', 'إنت عمري', 1964, 'طرب عربي', 33, 12, 'VG+', 85000, 1, { description: 'طبعة صوت القاهرة الأصلية، الغلاف بحالة جيدة جداً.' }),
     R('u-owner', 'فيروز — معرفتي فيك', 'فيروز', 'معرفتي فيك', 1971, 'طرب عربي', 33, 12, 'NM', 95000, 2),
-    R('u-owner', 'ناظم الغزالي — فوق النخل', 'ناظم الغزالي', 'أغاني عراقية', 1958, 'مقام عراقي', 45, 7, 'VG', 60000, 3),
+    R('u-owner', 'ناظم الغزالي — فوق النخل', 'ناظم الغزالي', 'أغاني عراقية', 1958, 'تراث وفولكلور', 45, 7, 'VG', 60000, 3),
     R('u-owner', 'عبد الحليم حافظ — قارئة الفنجان', 'عبد الحليم حافظ', 'قارئة الفنجان', 1976, 'طرب عربي', 33, 12, 'VG+', 75000, 4),
     R('u-owner', 'Miles Davis — Kind of Blue', 'Miles Davis', 'Kind of Blue', 1959, 'جاز', 33, 12, 'VG+', 120000, 5, { description: 'طبعة أوروبية من الستينات.' }),
     R('u-owner', 'The Beatles — Abbey Road', 'The Beatles', 'Abbey Road', 1969, 'روك', 33, 12, 'VG', 110000, 6),
     R('u-owner', 'Pink Floyd — The Dark Side of the Moon', 'Pink Floyd', 'The Dark Side of the Moon', 1973, 'روك', 33, 12, 'NM', 150000, 7, { stock: 2 }),
     R('u-owner', 'محمد عبد الوهاب — الجندول', 'محمد عبد الوهاب', 'الجندول', 1941, 'طرب عربي', 78, 10, 'G+', 70000, 8, { description: 'أسطوانة شيلاك 78 لفة — تحتاج غرامافون أو مشغّل يدعم 78.' }),
-    R('u-owner', 'يوسف عمر — مقامات', 'يوسف عمر', 'مقامات عراقية', 1965, 'مقام عراقي', 33, 12, 'VG', 90000, 9),
+    R('u-owner', 'يوسف عمر — مقامات', 'يوسف عمر', 'مقامات عراقية', 1965, 'تراث وفولكلور', 33, 12, 'VG', 90000, 9),
     R('u-owner', 'Louis Armstrong — What a Wonderful World', 'Louis Armstrong', 'What a Wonderful World', 1968, 'جاز', 45, 7, 'VG+', 45000, 10),
     G('u-owner', 'غرامافون HMV بوق نحاسي', 'HMV', 'Model 32', 'very_good', true, 650000, 2, 'غرامافون بوق نحاسي أصلي، مُرمَّم بالكامل ويعمل بشكل ممتاز. يأتي مع 10 إبر.'),
     G('u-owner', 'غرامافون حقيبة His Master\'s Voice', 'His Master\'s Voice', 'Model 102', 'good', true, 420000, 5, 'غرامافون محمول بشكل حقيبة من الأربعينات، صوت قوي ونابض.'),
@@ -282,11 +282,14 @@ function demoSeed() {
   };
   products.push(R('u-owner', 'كاظم الساهر — عبرت الشط', 'كاظم الساهر', 'عبرت الشط', 1989, 'طرب عربي', 33, 12, 'VG+', 65000, 15));
   products.push(R('u-owner', 'Elvis Presley — Love Me Tender', 'Elvis Presley', 'Love Me Tender', 1956, 'روك', 45, 7, 'VG', 55000, 16));
+  const CD = (...a) => ({ ...R(...a), kind: 'cd', speed: null, size: null });
+  products.push(CD('u-owner', 'كاظم الساهر — أنا وليلى', 'كاظم الساهر', 'أنا وليلى', 1998, 'طرب عربي', null, null, '', 25000, 0.5, { stock: 3 }));
+  products.push(CD('u-owner', 'Queen — Greatest Hits', 'Queen', 'Greatest Hits', 1981, 'روك', null, null, '', 30000, 0.7));
   O('o-1', 'JV4F2A91', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-14'], 'delivered', 6, 'CR-10293');
   O('o-2', 'JV7B0C33', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-15', 'p-3'], 'with_courier', 1, 'CR-10377');
   O('o-3', 'JV19E5D0', null, 'مصطفى جاسم', '07801234567', 'البصرة', 'العشار، شارع الكويت', ['p-2'], 'new', 0.2);
   const settings = { tagline: 'أسطوانات وغرامافونات من الزمن الجميل', announcement: '',
     contact_phone: '07700000002', courier_name: 'شركة التوصيل' };
   const fees = GOVERNORATES.map(g => ({ governorate: g, fee: g === 'بغداد' ? 5000 : ['بابل', 'كربلاء', 'النجف', 'واسط', 'ديالى', 'القادسية'].includes(g) ? 7000 : 8000, active: true }));
-  return { v: 2, profiles, sellers, products, orders, order_items, order_events, settings, fees };
+  return { v: 3, profiles, sellers, products, orders, order_items, order_events, settings, fees };
 }

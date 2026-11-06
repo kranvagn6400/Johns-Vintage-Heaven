@@ -131,7 +131,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .input[dir="ltr"]{text-align:left}
 .hint{font-size:12.5px;color:var(--muted);margin-top:5px}
 .stack{display:flex;flex-direction:column;gap:14px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
 .check{display:flex;align-items:center;gap:10px;font-size:14.5px;cursor:pointer}
 .check input{width:20px;height:20px;accent-color:var(--wine)}
 .seg{display:flex;background:var(--paper-2);border-radius:var(--r);padding:4px;gap:4px}
@@ -192,7 +192,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 @media (min-width:700px){.hero{grid-template-columns:1fr auto;padding:40px 38px}.hero h1{font-size:44px}.hero-art{width:230px}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.hero-art,.spin-disc{animation:none!important}}
-.cats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
 .cat{display:flex;align-items:center;gap:12px;padding:16px;border-radius:var(--r-lg);background:var(--card);border:1px solid var(--line);box-shadow:var(--sh-1)}
 .cat .ic{width:34px;height:34px;color:var(--wine)}
 .cat b{display:block;font-size:16px}

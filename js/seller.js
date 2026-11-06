@@ -54,7 +54,7 @@ const Seller = {
   },
 
   async form(view, id) {
-    let p = { kind: 'record', title: '', price: '', stock: 1, status: 'active', condition: '', photos: [], working: true };
+    let p = { kind: 'record', title: '', price: '', stock: 1, status: 'active', condition: '', photos: [] };
     if (id) {
       view.innerHTML = UI.loading();
       try { const rows = await API.myProducts(); p = rows.find(x => x.id === id); } catch (e) { view.innerHTML = UI.error(e); return; }
@@ -65,27 +65,20 @@ const Seller = {
     const yearNow = new Date().getFullYear();
     view.innerHTML = `<div class="page-head"><a class="back-btn" href="#/seller" aria-label="رجوع">${icon('back')}</a><h1>${id ? 'تعديل منتج' : 'منتج جديد'}</h1></div>
       <form id="pForm" class="stack" style="max-width:720px" novalidate>
-        <div class="seg"><label><input type="radio" name="kind" value="record" ${p.kind === 'record' ? 'checked' : ''}>أسطوانة</label>
-          <label><input type="radio" name="kind" value="gramophone" ${p.kind === 'gramophone' ? 'checked' : ''}>غرامافون</label></div>
+        <div class="seg">${['record', 'cd', 'gramophone'].map(k => `<label><input type="radio" name="kind" value="${k}" ${p.kind === k ? 'checked' : ''}>${KIND_NAMES[k]}</label>`).join('')}</div>
         <fieldset><legend>الصور</legend><div class="photos-edit" id="phs"></div><p class="hint">الصورة الأولى هي صورة الغلاف. حتى 8 صور.</p></fieldset>
         <fieldset><legend>الأساسيات</legend>
-          <div><label class="lbl" for="pTitle">اسم المنتج <span class="req">*</span></label><input class="input" id="pTitle" value="${esc(p.title)}" placeholder="مثال: فيروز — معرفتي فيك" required></div>
-          <div class="grid2"><div><label class="lbl" for="pPrice">السعر (د.ع) <span class="req">*</span></label><input class="input num" id="pPrice" inputmode="numeric" value="${esc(p.price)}" required></div>
-            <div><label class="lbl" for="pStock">الكمية</label><input class="input num" id="pStock" inputmode="numeric" value="${esc(p.stock)}"></div></div>
-          <div><label class="lbl" for="pCond">الحالة <span class="req">*</span></label><select class="input" id="pCond"></select></div>
-        </fieldset>
-        <fieldset id="recBox"><legend>تفاصيل الأسطوانة</legend>
-          <div class="grid2"><div><label class="lbl" for="pArtist">الفنان <span class="req">*</span></label><input class="input" id="pArtist" value="${esc(p.artist || '')}"></div>
-            <div><label class="lbl" for="pAlbum">الألبوم</label><input class="input" id="pAlbum" value="${esc(p.album || '')}"></div></div>
-          <div class="grid2"><div><label class="lbl" for="pYear">سنة الإصدار</label><input class="input num" id="pYear" inputmode="numeric" maxlength="4" value="${esc(p.year || '')}"></div>
-            <div><label class="lbl" for="pGenre">النوع الموسيقي</label><select class="input" id="pGenre"><option value="">—</option>${UI.options(GENRES, p.genre)}</select></div></div>
-          <div class="grid2"><div><label class="lbl" for="pSpeed">السرعة</label><select class="input" id="pSpeed"><option value="">—</option>${UI.options(SPEEDS, p.speed, { 33: '33 لفة', 45: '45 لفة', 78: '78 لفة' })}</select></div>
-            <div><label class="lbl" for="pSize">الحجم</label><select class="input" id="pSize"><option value="">—</option>${UI.options(SIZES, p.size, { 7: '7 إنش', 10: '10 إنش', 12: '12 إنش' })}</select></div></div>
-        </fieldset>
-        <fieldset id="gramBox"><legend>تفاصيل الغرامافون</legend>
-          <div class="grid2"><div><label class="lbl" for="pBrand">الماركة <span class="req">*</span></label><input class="input" id="pBrand" value="${esc(p.brand || '')}" placeholder="HMV، Columbia…"></div>
+          <div data-for="gramophone"><label class="lbl" for="pTitle">اسم المنتج <span class="req">*</span></label><input class="input" id="pTitle" value="${esc(p.kind === 'gramophone' ? p.title : '')}" placeholder="مثال: غرامافون HMV بوق نحاسي"></div>
+          <div class="grid2" data-for="record cd"><div><label class="lbl" for="pArtist">المطرب <span class="req">*</span></label><input class="input" id="pArtist" value="${esc(p.artist || '')}" placeholder="مثال: فيروز"></div>
+            <div><label class="lbl" for="pAlbum" id="pAlbumLbl">اسم الأغنية <span class="req">*</span></label><input class="input" id="pAlbum" value="${esc(p.album || '')}" placeholder="مثال: معرفتي فيك"></div></div>
+          <div class="grid2"><div><label class="lbl" for="pPrice">السعر (د.ع) <span class="req">*</span></label><input class="input num" id="pPrice" inputmode="numeric" value="${esc(p.price)}"></div>
+            <div><label class="lbl" for="pStock">الكمية المتوفرة</label><input class="input num" id="pStock" inputmode="numeric" value="${esc(p.stock)}"></div></div>
+          <div class="grid2" data-for="gramophone"><div><label class="lbl" for="pBrand">الماركة <span class="req">*</span></label><input class="input" id="pBrand" value="${esc(p.brand || '')}" placeholder="HMV، Columbia…"></div>
             <div><label class="lbl" for="pModel">الموديل</label><input class="input" id="pModel" value="${esc(p.model || '')}"></div></div>
-          <div class="seg"><label><input type="radio" name="working" value="1" ${p.working !== false ? 'checked' : ''}>يعمل</label><label><input type="radio" name="working" value="0" ${p.working === false ? 'checked' : ''}>لا يعمل</label></div>
+          <div class="grid2" data-for="record cd"><div><label class="lbl" for="pYear">سنة الإصدار <span class="muted">(اختياري)</span></label><input class="input num" id="pYear" inputmode="numeric" maxlength="4" value="${esc(p.year || '')}"></div>
+            <div><label class="lbl" for="pGenre">النوع الموسيقي <span class="muted">(اختياري)</span></label><select class="input" id="pGenre"><option value="">—</option>${UI.options(GENRES, p.genre)}</select></div></div>
+          <div class="grid2" data-for="record"><div><label class="lbl" for="pSpeed">السرعة <span class="muted">(اختياري)</span></label><select class="input" id="pSpeed"><option value="">—</option>${UI.options(SPEEDS, p.speed, { 33: '33 لفة', 45: '45 لفة', 78: '78 لفة' })}</select></div>
+            <div><label class="lbl" for="pSize">الحجم <span class="muted">(اختياري)</span></label><select class="input" id="pSize"><option value="">—</option>${UI.options(SIZES, p.size, { 7: '7 إنش', 10: '10 إنش', 12: '12 إنش' })}</select></div></div>
         </fieldset>
         <fieldset><legend>الوصف</legend><textarea class="input" id="pDesc" placeholder="الطبعة، حالة الغلاف، ملاحظات مهمة للمشتري…">${esc(p.description || '')}</textarea>
           <label class="check"><input type="checkbox" id="pHidden" ${p.status === 'hidden' ? 'checked' : ''}> إخفاء من المتجر مؤقتاً</label></fieldset>
@@ -93,10 +86,11 @@ const Seller = {
           ${id ? `<button class="btn btn-danger" type="button" id="pDel">${icon('trash')} حذف</button>` : ''}</div>
       </form>`;
     const kind = () => $('input[name=kind]:checked').value;
+    // كل صف يظهر لأنواع المنتجات المكتوبة في data-for فقط
     const syncKind = () => {
-      const k = kind(); $('#recBox').classList.toggle('hidden', k !== 'record'); $('#gramBox').classList.toggle('hidden', k !== 'gramophone');
-      const list = k === 'record' ? RECORD_GRADES : GRAMO_GRADES, cur = $('#pCond').value || p.condition;
-      $('#pCond').innerHTML = '<option value="">اختر الحالة</option>' + UI.options(Object.keys(list), cur, list);
+      const k = kind();
+      $$('[data-for]', $('#pForm')).forEach(el => el.classList.toggle('hidden', !el.dataset.for.split(' ').includes(k)));
+      $('#pAlbumLbl').innerHTML = (k === 'cd' ? 'اسم الأغنية أو الألبوم' : 'اسم الأغنية') + ' <span class="req">*</span>';
     };
     $$('input[name=kind]').forEach(r => r.onchange = syncKind); syncKind();
     ['pPrice', 'pStock', 'pYear'].forEach(i => $('#' + i).oninput = e => { e.target.value = toLatinDigits(e.target.value).replace(/\D/g, ''); });
@@ -115,15 +109,18 @@ const Seller = {
     $('#pForm').onsubmit = async e => {
       e.preventDefault();
       const k = kind(), stock = Number($('#pStock').value || 0);
-      const d = { ...p, kind: k, title: $('#pTitle').value.trim(), price: $('#pPrice').value, stock, condition: $('#pCond').value, description: $('#pDesc').value.trim(),
+      const music = k !== 'gramophone';
+      const d = { ...p, kind: k, price: $('#pPrice').value, stock, condition: p.condition || '', description: $('#pDesc').value.trim(),
         artist: $('#pArtist').value.trim(), album: $('#pAlbum').value.trim(), year: $('#pYear').value, genre: $('#pGenre').value, speed: $('#pSpeed').value, size: $('#pSize').value,
-        brand: $('#pBrand').value.trim(), model: $('#pModel').value.trim(), working: $('input[name=working]:checked').value === '1' };
+        brand: $('#pBrand').value.trim(), model: $('#pModel').value.trim(), working: null };
+      // اسم المنتج: للأسطوانة والـ CD يُكوَّن من المطرب والأغنية، وللغرامافون يُكتب يدوياً
+      d.title = music ? [d.artist, d.album].filter(Boolean).join(' — ') : $('#pTitle').value.trim();
       d.status = $('#pHidden').checked ? 'hidden' : stock < 1 ? 'sold' : 'active';
-      if (!d.title) return toast('اكتب اسم المنتج');
+      if (music && !d.artist) return toast('اكتب اسم المطرب');
+      if (music && !d.album) return toast(k === 'cd' ? 'اكتب اسم الأغنية أو الألبوم' : 'اكتب اسم الأغنية');
+      if (!music && !d.title) return toast('اكتب اسم المنتج');
       if (!(Number(d.price) > 0)) return toast('اكتب السعر');
-      if (!d.condition) return toast('اختر حالة المنتج');
-      if (k === 'record' && !d.artist) return toast('اكتب اسم الفنان');
-      if (k === 'gramophone' && !d.brand) return toast('اكتب ماركة الغرامافون');
+      if (!music && !d.brand) return toast('اكتب ماركة الغرامافون');
       if (d.year && (d.year < 1890 || d.year > yearNow)) return toast('سنة الإصدار غير صحيحة');
       if (!photos.length && !await confirmBox('لا توجد صور. المنتجات بصور حقيقية تُباع أسرع. الحفظ بدون صور؟', 'حفظ بدون صور')) return;
       busy(true, 'جارٍ الحفظ…');

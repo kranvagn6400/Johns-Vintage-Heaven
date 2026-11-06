@@ -206,14 +206,14 @@ const SupaAPI = {
 function clean(s) { return String(s).replace(/[,()*%\\"]/g, ' ').trim(); }
 // الأعمدة المسموح إرسالها للجدول
 function productRow(p) {
-  const rec = p.kind === 'record';
+  const rec = p.kind === 'record', music = isMusic(p.kind), gram = p.kind === 'gramophone';
   const num = v => (v === '' || v == null ? null : Number(v));
   return {
     id: p.id, seller_id: p.seller_id, kind: p.kind, title: p.title.trim(), description: p.description || '',
     price: Math.round(Number(p.price) || 0), stock: Math.max(0, Math.round(Number(p.stock) || 0)),
     status: p.status || 'active', condition: p.condition || '', photos: p.photos || [],
-    artist: rec ? p.artist || '' : '', album: rec ? p.album || '' : '', year: rec ? num(p.year) : null,
-    genre: rec ? p.genre || '' : '', speed: rec ? num(p.speed) : null, size: rec ? num(p.size) : null,
-    brand: rec ? '' : p.brand || '', model: rec ? '' : p.model || '', working: rec ? null : (p.working == null ? null : !!p.working)
+    artist: music ? p.artist || '' : '', album: music ? p.album || '' : '', year: music ? num(p.year) : null,
+    genre: music ? p.genre || '' : '', speed: rec ? num(p.speed) : null, size: rec ? num(p.size) : null,
+    brand: gram ? p.brand || '' : '', model: gram ? p.model || '' : '', working: gram && p.working != null ? !!p.working : null
   };
 }

@@ -47,6 +47,16 @@ const UI = {
   art(p, bare) {
     if (typeof Pixel !== 'undefined' && Pixel.on()) return Pixel.art(p);
     const c = LABEL_COLORS[hashNum(p.id || p.title) % LABEL_COLORS.length];
+    // قرص CD فضي بلمعة قوس قزح
+    if (p.kind === 'cd') return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true">
+      ${bare ? '' : '<rect width="200" height="200" fill="var(--art-bg)"/>'}
+      <defs><linearGradient id="cdShine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eceef3"/><stop offset=".3" stop-color="#c7d6f2"/>
+        <stop offset=".45" stop-color="#f4d6e6"/><stop offset=".6" stop-color="#d6f1da"/><stop offset=".78" stop-color="#f3ecc8"/><stop offset="1" stop-color="#b9bec8"/></linearGradient></defs>
+      <circle cx="100" cy="100" r="84" fill="url(#cdShine)" stroke="#9097a3" stroke-width="1.5"/>
+      <path d="M44 62 A70 70 0 0 1 96 30" stroke="rgba(255,255,255,.75)" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="30" fill="${c}" opacity=".9"/>
+      <circle cx="100" cy="100" r="15" fill="#e8ecf1" stroke="#9097a3" stroke-width="1"/>
+      <circle cx="100" cy="100" r="7" fill="${bare ? '#17110c' : 'var(--art-bg)'}"/></svg>`;
     if (p.kind === 'gramophone') return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true">
       <rect width="200" height="200" fill="var(--art-bg)"/>
       <rect x="44" y="132" width="86" height="40" rx="4" fill="${c}"/><rect x="44" y="132" width="86" height="8" fill="rgba(0,0,0,.18)"/>
@@ -68,7 +78,7 @@ const UI = {
     return path ? `<img src="${esc(API.photoUrl(path))}" alt="${esc(p.title)}" loading="lazy">` : this.art(p);
   },
   meta(p) {
-    if (p.kind === 'record') return [p.artist, p.year, p.speed && `${p.speed} لفة`].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
+    if (isMusic(p.kind)) return [p.artist, p.year, p.speed && `${p.speed} لفة`].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
     return [p.brand, p.model].filter(Boolean).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ');
   },
   card(p) {

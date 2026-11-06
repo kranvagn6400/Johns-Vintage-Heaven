@@ -35,9 +35,12 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   another port (never let tests write to the live project). SQL changes must be re-run by the user in the SQL editor.
 
 ## Data (supabase-setup.sql — the user runs it in the Supabase SQL editor; safe to re-run)
-- Tables: `profiles`, `sellers` (1:1 with profile; `commission_rate` reserved), `products` (kind record|gramophone;
-  record: artist/album/year/genre/speed 33|45|78/size 7|10|12; gramophone: brand/model/working; `condition` =
-  Goldmine grade M…P for records, excellent…needs_repair for gramophones; `photos text[]`), `delivery_fees`
+- Tables: `profiles`, `sellers` (1:1 with profile; `commission_rate` reserved), `products` (kind record|cd|gramophone;
+  the kind check is re-created by `alter table` so old DBs accept `cd`. Form (seller.js, rows toggled by `data-for`):
+  record = singer «المطرب» (`artist`) + song «اسم الأغنية» (`album`), price + quantity, optional year/genre/speed 33|45|78/size 7|10|12;
+  cd = same without speed/size (`album` label «اسم الأغنية أو الألبوم»); gramophone = title, price, quantity, brand, model.
+  Record/CD `title` is built as "artist — album". `condition` and `working` are no longer collected or shown (columns kept);
+  `isMusic(kind)` = record|cd. Genres list has no «مقام عراقي» / «تلاوة وإنشاد». `photos text[]`), `delivery_fees`
   (19 governorates), `settings` (key/value), `orders`, `order_items` (price/title snapshot, `commission_amount`
   reserved), `order_events` (status history), `payments` (phase 2, unused, server-only writes).
 - Orders are created ONLY by `place_order` (security definer: prices and fee from DB, locks stock, decrements,

@@ -63,8 +63,9 @@ const blobToDataURL = b => new Promise(r => { const f = new FileReader(); f.onlo
 const BRAND = 'Johns Vintage Heaven';
 const ROLE_NAMES = { admin: 'المشرف التقني', owner: 'صاحب المتجر', seller: 'بائع', customer: 'زبون', disabled: 'موقوف' };
 const SELLER_STATUS = { pending: 'بانتظار الموافقة', approved: 'معتمد', rejected: 'مرفوض', suspended: 'موقوف' };
-const KIND_NAMES = { record: 'أسطوانة', gramophone: 'غرامافون' };
-const KIND_PLURAL = { record: 'أسطوانات', gramophone: 'غرامافونات' };
+const KIND_NAMES = { record: 'أسطوانة', cd: 'CD', gramophone: 'غرامافون' };
+const KIND_PLURAL = { record: 'أسطوانات', cd: 'أقراص CD', gramophone: 'غرامافونات' };
+const isMusic = k => k === 'record' || k === 'cd';   // أنواع لها مطرب وأغنية
 const PRODUCT_STATUS = { active: 'معروض', hidden: 'مخفي', sold: 'مُباع' };
 
 // حالات الطلب بالترتيب (cancelled خارج المسار)
@@ -82,8 +83,8 @@ const RECORD_GRADES = {
 const GRAMO_GRADES = { excellent: 'ممتاز', very_good: 'جيد جداً', good: 'جيد', fair: 'مقبول', needs_repair: 'يحتاج صيانة' };
 const gradeName = p => p.kind === 'record' ? (p.condition ? p.condition : '—') : (GRAMO_GRADES[p.condition] || '—');
 const gradeLong = p => p.kind === 'record' ? (RECORD_GRADES[p.condition] || '—') : (GRAMO_GRADES[p.condition] || '—');
-const GENRES = ['طرب عربي', 'مقام عراقي', 'تراث وفولكلور', 'كلاسيك', 'جاز', 'بلوز', 'روك', 'بوب', 'سول وفانك', 'ديسكو',
-  'ريغي', 'إلكتروني', 'موسيقى أفلام', 'تلاوة وإنشاد', 'أطفال', 'أخرى'];
+const GENRES = ['طرب عربي', 'تراث وفولكلور', 'كلاسيك', 'جاز', 'بلوز', 'روك', 'بوب', 'سول وفانك', 'ديسكو',
+  'ريغي', 'إلكتروني', 'موسيقى أفلام', 'أطفال', 'أخرى'];
 const SPEEDS = [33, 45, 78];
 const SIZES = [7, 10, 12];
 

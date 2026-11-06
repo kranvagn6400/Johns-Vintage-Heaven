@@ -71,6 +71,7 @@ const App = {
     $('#tbAccount').classList.toggle('hidden', !staff);
     $('#tbNav').innerHTML = [
       ['#/', 'الرئيسية', p === '/'], ['#/shop?kind=record', 'الأسطوانات', p === '/shop' && kind === 'record'],
+      ['#/shop?kind=cd', 'أقراص CD', p === '/shop' && kind === 'cd'],
       ['#/shop?kind=gramophone', 'الغرامافونات', p === '/shop' && kind === 'gramophone'], ['#/track', 'تتبّع طلب', p === '/track'],
       ...(dash ? [[dash[0], dash[1], p === dash[0].slice(1)]] : []),
       ...(API.me && API.me.role === 'admin' ? [['#/owner', 'إدارة المتجر', p === '/owner']] : [])
