@@ -89,14 +89,14 @@ const DemoAPI = {
   async products(f = {}) {
     await this.tick();
     const t = f.q && normAr(f.q), a = f.artist && normAr(f.artist);
-    let rows = this.db.products.filter(p => this.canSee(p) && (f.includeSold ? ['active', 'sold'].includes(p.status) : p.status === 'active')
+    let rows = this.db.products.filter(p => this.canSee(p) && (f.onlyActive ? p.status === 'active' : ['active', 'sold'].includes(p.status))
       && (!f.kind || p.kind === f.kind) && (!f.genre || p.genre === f.genre) && (!f.condition || p.condition === f.condition)
       && (!f.speed || p.speed == f.speed) && (!f.size || p.size == f.size) && (!f.sellerId || p.seller_id === f.sellerId)
       && (!f.minPrice || p.price >= Number(f.minPrice)) && (!f.maxPrice || p.price <= Number(f.maxPrice))
       && (!a || normAr(p.artist).includes(a))
       && (!t || [p.title, p.artist, p.album, p.brand, p.model, p.genre].some(x => normAr(x).includes(t))));
     const s = { price_asc: (x, y) => x.price - y.price, price_desc: (x, y) => y.price - x.price }[f.sort] || ((x, y) => y.created_at.localeCompare(x.created_at));
-    rows.sort(s);
+    rows.sort((x, y) => (x.status === 'sold') - (y.status === 'sold') || s(x, y));   // المتوفر أولاً
     const off = f.offset || 0, limit = f.limit || 24;
     return { rows: rows.slice(off, off + limit).map(p => this.withSeller(p)), more: rows.length > off + limit };
   },

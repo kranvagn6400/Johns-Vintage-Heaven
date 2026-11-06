@@ -119,7 +119,8 @@ const SupaAPI = {
   },
   async products(f = {}) {
     const q = ['select=*,seller:sellers(shop_name)'];
-    q.push(f.includeSold ? 'status=in.(active,sold)' : 'status=eq.active');
+    // المنتج الذي نفذت كميته يبقى ظاهراً بعلامة «نفذت الكمية» (onlyActive لعرض المتوفر فقط)
+    q.push(f.onlyActive ? 'status=eq.active' : 'status=in.(active,sold)');
     if (f.kind) q.push('kind=eq.' + f.kind);
     for (const k of ['genre', 'condition', 'speed', 'size']) if (f[k]) q.push(`${k}=eq.${encodeURIComponent(f[k])}`);
     if (f.sellerId) q.push('seller_id=eq.' + f.sellerId);
@@ -130,7 +131,8 @@ const SupaAPI = {
       const t = encodeURIComponent(`*${clean(f.q)}*`);
       q.push(`or=(title.ilike.${t},artist.ilike.${t},album.ilike.${t},brand.ilike.${t},model.ilike.${t},genre.ilike.${t})`);
     }
-    q.push('order=' + ({ price_asc: 'price.asc', price_desc: 'price.desc' }[f.sort] || 'created_at.desc'));
+    // المتوفر أولاً ثم ما نفذت كميته (active قبل sold أبجدياً)
+    q.push('order=status.asc,' + ({ price_asc: 'price.asc', price_desc: 'price.desc' }[f.sort] || 'created_at.desc'));
     const limit = f.limit || 24;
     q.push(`limit=${limit + 1}`, `offset=${f.offset || 0}`);
     const rows = await this.get('products', q.join('&'));

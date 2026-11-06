@@ -66,7 +66,7 @@ const SELLER_STATUS = { pending: 'بانتظار الموافقة', approved: '�
 const KIND_NAMES = { record: 'أسطوانة', cd: 'CD', gramophone: 'غرامافون' };
 const KIND_PLURAL = { record: 'أسطوانات', cd: 'أقراص CD', gramophone: 'غرامافونات' };
 const isMusic = k => k === 'record' || k === 'cd';   // أنواع لها مطرب وأغنية
-const PRODUCT_STATUS = { active: 'معروض', hidden: 'مخفي', sold: 'مُباع' };
+const PRODUCT_STATUS = { active: 'معروض', hidden: 'مخفي', sold: 'نفذت الكمية' };
 
 // حالات الطلب بالترتيب (cancelled خارج المسار)
 const ORDER_FLOW = ['new', 'confirmed', 'with_courier', 'delivered'];

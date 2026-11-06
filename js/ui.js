@@ -84,7 +84,7 @@ const UI = {
   card(p) {
     const sold = p.status === 'sold' || p.stock < 1;
     return `<a class="pcard ${sold ? 'is-sold' : ''}" href="#/p/${esc(p.id)}">
-      <div class="pcard-img">${this.photo(p)}${sold ? '<span class="sold-tag">مُباع</span>' : ''}</div>
+      <div class="pcard-img">${this.photo(p)}${sold ? '<span class="sold-tag">نفذت الكمية</span>' : ''}</div>
       <div class="pcard-body">
         <span class="kind">${KIND_NAMES[p.kind]}</span>
         <h3>${esc(p.title)}</h3>
