@@ -14,20 +14,22 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
 - `API` (app.js) picks one. **Both objects implement the same methods** — change both together, and keep
   demo.js rules in step with the RLS/RPCs in supabase-setup.sql.
 
-## Roles (`profiles.role`)
-- `admin` «المشرف التقني» = the user: accounts/roles, store settings (tagline, announcement, contact phone,
-  courier name). Can open إدارة المتجر for support. First-ever signup becomes admin (trigger). Last admin can't be removed.
-- `owner` «صاحب المتجر» = the friend: approves/rejects/suspends sellers, all orders and their statuses,
-  courier tracking number, delivery fee per governorate, sales page. Created by admin (حساب جديد → صاحب المتجر).
-- `seller` «بائع»: signs up with «بائع» + shop name → `sellers.status='pending'`; only `approved` sellers can
-  write products/photos (RLS `is_approved_seller`). Sees only own products and `seller_orders()` (own items,
-  no customer phone/address). Seller created by admin is auto-approved.
-- `customer` «زبون»: browse, cart (localStorage `jvh_cart`), checkout, «طلباتي», cancel own order while `new`.
-- Owner and admin also sell their own products: «منتجاتي» (#/seller, tabs in إدارة المتجر / لوحة المشرف / حسابي) calls
-  `API.ensureShop()` → RPC `ensure_staff_shop` (approved `sellers` row named Johns Vintage Heaven). `is_approved_seller` accepts
-  role seller|owner|admin. Staff shops are hidden from the owner's «البائعون» review list.
-- `disabled`: blocked at login.
-- Guest checkout is allowed; guests track with code + phone (`track_order` RPC).
+## Roles () — single store (user's decision, 2026-11-06)
+-  «المشرف التقني» = the user: manages EVERYTHING — accounts/roles, store settings, orders and statuses,
+  courier tracking number, delivery fees, sales («إدارة المتجر» #/owner is admin-only), and products. First-ever signup
+  becomes admin (trigger). Last admin can't be removed.
+-  «صاحب المتجر» = the friend: ONLY adds/edits/deletes products and their photos («المنتجات» #/seller). No orders,
+  fees, settings or accounts. Created by admin (حساب جديد → صاحب المتجر). Lands on #/seller after login.
+- No sellers: signup creates customers only; seller signup, seller dashboard tabs and the «البائعون» review list are gone.
+  The  role value and  table remain only as the products' shop (): owner/admin get an
+  approved shop named Johns Vintage Heaven via  → RPC . Owner and admin see and edit
+  ALL store products ( drops the seller filter for them).
+- SQL:  now means admin only;  = owner|admin (products RLS, storage policies, ensure_staff_shop).
+  Demo mirrors this with  (admin) and  (owner|admin); demo DB version 2 (no seller accounts).
+-  «زبون»: browse, cart (localStorage ), checkout, «طلباتي», cancel own order while .
+- : blocked at login. Guest checkout is allowed; guests track with code + phone ( RPC).
+- Supabase is LIVE (config.js filled, commit 61f67bd). Test in demo mode only: serve a copy with an empty config.js on
+  another port (never let tests write to the live project). SQL changes must be re-run by the user in the SQL editor.
 
 ## Data (supabase-setup.sql — the user runs it in the Supabase SQL editor; safe to re-run)
 - Tables: `profiles`, `sellers` (1:1 with profile; `commission_rate` reserved), `products` (kind record|gramophone;

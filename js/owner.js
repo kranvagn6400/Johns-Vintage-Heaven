@@ -5,18 +5,18 @@ const Owner = {
   route(view) {
     const tab = App.params.get('tab') || 'orders';
     const head = `<div class="page-head"><h1>إدارة المتجر</h1></div>
-      <div class="tabs">${[['orders', 'الطلبات', 'receipt'], ['sellers', 'البائعون', 'users'], ['fees', 'رسوم التوصيل', 'truck'], ['sales', 'المبيعات', 'chart']]
-        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}<a class="tab" href="#/seller">${icon('disc')} منتجاتي</a></div><div id="ownerBody">${UI.loading()}</div>`;
+      <div class="tabs">${[['orders', 'الطلبات', 'receipt'], ['fees', 'رسوم التوصيل', 'truck'], ['sales', 'المبيعات', 'chart']]
+        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}<a class="tab" href="#/seller">${icon('disc')} المنتجات</a></div><div id="ownerBody">${UI.loading()}</div>`;
     view.innerHTML = head;
     const body = $('#ownerBody');
-    ({ orders: () => this.ordersTab(body), sellers: () => this.sellersTab(body), fees: () => this.feesTab(body), sales: () => this.salesTab(body) }[tab] || (() => this.ordersTab(body)))();
+    ({ orders: () => this.ordersTab(body), fees: () => this.feesTab(body), sales: () => this.salesTab(body) }[tab] || (() => this.ordersTab(body)))();
     this.pendingCounts();
   },
   async pendingCounts() {
     try {
-      const [o, s] = await Promise.all([API.allOrders({ status: 'new' }), API.sellers()]);
+      const o = await API.allOrders({ status: 'new' });
       const set = (k, n) => { const el = $(`[data-n="${k}"]`); if (el) { el.textContent = n; el.classList.toggle('hidden', !n); } };
-      set('orders', o.length); set('sellers', s.filter(x => x.status === 'pending').length);
+      set('orders', o.length);
     } catch {}
   },
 
@@ -137,7 +137,7 @@ const Owner = {
     const sum = (list, k) => list.reduce((s, o) => s + o[k], 0);
     const bySeller = {};
     for (const o of rows.filter(o => o.status !== 'cancelled')) for (const i of o.items) {
-      const k = i.seller ? i.seller.shop_name : 'بائع محذوف';
+      const k = i.title;
       const b = bySeller[k] ||= { delivered: 0, open: 0, n: 0 };
       b[o.status === 'delivered' ? 'delivered' : 'open'] += i.price * i.qty; b.n += i.qty;
     }
@@ -151,7 +151,7 @@ const Owner = {
         <div class="stat"><small>طلبات مُسلَّمة</small><b>${delivered.length}</b></div>
         <div class="stat"><small>ملغاة</small><b>${rows.filter(o => o.status === 'cancelled').length}</b></div></div>
       <div class="dash-grid">
-        <div class="card"><h3>حسب البائع</h3>${sellers.length ? sellers.map(([k, v]) => `<div style="margin:10px 0">
+        <div class="card"><h3>الأكثر مبيعاً</h3>${sellers.length ? sellers.slice(0, 8).map(([k, v]) => `<div style="margin:10px 0">
           <div class="sum-line" style="padding:0"><b>${esc(k)}</b><span>${fmtIQD(v.delivered + v.open)}</span></div>
           <div class="bar"><span style="width:${Math.round((v.delivered + v.open) / max * 100)}%"></span></div>
           <div class="small muted">مُسلَّم ${fmtIQD(v.delivered)} · قيد التنفيذ ${fmtIQD(v.open)} · ${v.n} قطعة</div></div>`).join('') : '<p class="muted small">لا توجد مبيعات في هذه الفترة.</p>'}</div>

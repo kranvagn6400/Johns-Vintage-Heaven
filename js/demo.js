@@ -11,7 +11,7 @@ const DemoAPI = {
 
   load() {
     this.db = store.get('demo_db', null);
-    if (!this.db || this.db.v !== 1) { this.db = demoSeed(); this.save(); }
+    if (!this.db || this.db.v !== 2) { this.db = demoSeed(); this.save(); }
     if (this.db.settings.announcement === 'التوصيل لكل محافظات العراق — الدفع عند الاستلام') { this.db.settings.announcement = ''; this.save(); }
   },
   save() { if (!store.set('demo_db', this.db)) throw new Error('امتلأت ذاكرة المتصفح: احذف بعض الصور التجريبية أو أعد ضبط البيانات'); },
@@ -20,11 +20,12 @@ const DemoAPI = {
   uidNow() { return this.session && this.session.user.id; },
   prof(id) { return this.db.profiles.find(p => p.id === id); },
   role() { const p = this.prof(this.uidNow()); return p ? p.role : null; },
-  isStaff() { return ['owner', 'admin'].includes(this.role()); },
+  isStaff() { return this.role() === 'admin'; },                       // متجر واحد: المشرف يدير كل شيء
+  canEdit() { return ['owner', 'admin'].includes(this.role()); },       // المنتجات: صاحب المتجر والمشرف
   isAdmin() { return this.role() === 'admin'; },
   approved(id) { const s = this.db.sellers.find(x => x.id === id); const p = this.prof(id); return !!(s && p && s.status === 'approved' && ['seller', 'owner', 'admin'].includes(p.role)); },
   async ensureShop() {
-    if (!this.isStaff()) this.deny();
+    if (!this.canEdit()) this.deny();
     const me = this.uidNow(), s = this.db.sellers.find(x => x.id === me);
     if (s) s.status = 'approved';
     else this.db.sellers.push({ id: me, shop_name: BRAND, bio: '', status: 'approved', commission_rate: 0, created_at: new Date().toISOString() });
@@ -52,7 +53,7 @@ const DemoAPI = {
     phone = normPhone(phone);
     if (this.db.profiles.some(x => x.phone === phone)) throw new Error('رقم الهاتف مسجّل مسبقاً');
     if (String(password).length < 6) throw new Error('كلمة المرور قصيرة جداً (6 أحرف على الأقل)');
-    const id = uuid(), role = !this.db.profiles.length ? 'admin' : want_seller ? 'seller' : 'customer';
+    const id = uuid(), role = !this.db.profiles.length ? 'admin' : 'customer';
     this.db.profiles.push({ id, phone, full_name, role, password, created_at: new Date().toISOString() });
     if (role === 'seller') this.db.sellers.push({ id, shop_name: shop_name || '', bio: '', status: 'pending', commission_rate: 0, created_at: new Date().toISOString() });
     this.save();
@@ -84,7 +85,7 @@ const DemoAPI = {
   /* ---------- المنتجات ---------- */
   photoUrl(path) { return path || ''; },
   withSeller(p) { const s = this.db.sellers.find(x => x.id === p.seller_id); return { ...this.clone(p), seller: s ? { shop_name: s.shop_name, bio: s.bio } : null }; },
-  canSee(p) { return (['active', 'sold'].includes(p.status) && this.approved(p.seller_id)) || p.seller_id === this.uidNow() || this.isStaff(); },
+  canSee(p) { return (['active', 'sold'].includes(p.status) && this.approved(p.seller_id)) || this.canEdit(); },
   async products(f = {}) {
     await this.tick();
     const t = f.q && normAr(f.q), a = f.artist && normAr(f.artist);
@@ -101,24 +102,24 @@ const DemoAPI = {
   },
   async product(id) { await this.tick(); const p = this.db.products.find(x => x.id === id); return p && this.canSee(p) ? this.withSeller(p) : null; },
   async productsByIds(ids) { return this.db.products.filter(p => ids.includes(p.id) && this.canSee(p)).map(p => this.withSeller(p)); },
-  async myProducts() { await this.tick(); return this.clone(this.db.products.filter(p => p.seller_id === this.uidNow())).sort((x, y) => y.created_at.localeCompare(x.created_at)); },
+  async myProducts() { await this.tick(); return this.clone(this.db.products.filter(p => this.canEdit() || p.seller_id === this.uidNow())).sort((x, y) => y.created_at.localeCompare(x.created_at)); },
   async saveProduct(p, photos) {
     await this.tick();
     const me = this.uidNow(), seller = p.seller_id || me;
-    if (!((seller === me && this.approved(me)) || this.isStaff())) this.deny();
+    if (!this.canEdit() || (!p.id && seller !== me && !this.isStaff())) this.deny();   // منتج جديد يُسجَّل باسم من أضافه
     const paths = [];
     for (const ph of photos) paths.push(ph.path || await blobToDataURL(await compressImage(ph.blob, 720, 0.7)));
     const row = productRow({ ...p, id: p.id || uuid(), seller_id: seller, photos: paths });
     const old = this.db.products.find(x => x.id === row.id);
     const now = new Date().toISOString();
-    if (old) { if (!((old.seller_id === me && this.approved(me)) || this.isStaff())) this.deny(); Object.assign(old, row, { seller_id: old.seller_id, updated_at: now }); }
+    if (old) { Object.assign(old, row, { seller_id: old.seller_id, updated_at: now }); }
     else this.db.products.push({ ...row, created_at: now, updated_at: now });
     this.save();
     return this.clone(old || this.db.products[this.db.products.length - 1]);
   },
   async deleteProduct(p) {
     const old = this.db.products.find(x => x.id === p.id);
-    if (!old || !((old.seller_id === this.uidNow() && this.approved(old.seller_id)) || this.isStaff())) this.deny();
+    if (!old || !this.canEdit()) this.deny();
     this.db.products = this.db.products.filter(x => x.id !== p.id);
     for (const i of this.db.order_items) if (i.product_id === p.id) i.product_id = null;
     this.save();
@@ -236,16 +237,11 @@ function demoSeed() {
   const profiles = [
     P('u-admin', '07700000001', 'المشرف التقني', 'admin', 40),
     P('u-owner', '07700000002', 'جون — صاحب المتجر', 'owner', 39),
-    P('u-s1', '07700000003', 'علي الموسوي', 'seller', 30),
-    P('u-s2', '07700000004', 'مها الكبيسي', 'seller', 25),
-    P('u-s3', '07700000005', 'حيدر سلمان', 'seller', 2),
     P('u-c1', '07700000006', 'زينب كريم', 'customer', 10)
   ];
   const S = (id, shop_name, bio, status, d) => ({ id, shop_name, bio, status, commission_rate: 0, created_at: ago(d) });
   const sellers = [
-    S('u-s1', 'بيت الأسطوانات', 'أسطوانات أصلية من مجموعات خاصة في بغداد منذ السبعينات.', 'approved', 30),
-    S('u-s2', 'ركن الغرامافون', 'غرامافونات مُرمَّمة يدوياً وأسطوانات 78 نادرة.', 'approved', 25),
-    S('u-s3', 'أسطوانات الرشيد', '', 'pending', 2)
+    S('u-owner', BRAND, '', 'approved', 39)   // متجر واحد: كل المنتجات لصاحب المتجر
   ];
   let n = 0;
   const R = (seller, title, artist, album, year, genre, speed, size, condition, price, d, extra = {}) => ({
@@ -256,19 +252,19 @@ function demoSeed() {
     id: 'p-' + (++n), seller_id: seller, kind: 'gramophone', title, description, price, stock: 1, status: 'active', condition,
     photos: [], artist: '', album: '', year: null, genre: '', speed: null, size: null, brand, model, working, created_at: ago(d), updated_at: ago(d) });
   const products = [
-    R('u-s1', 'أم كلثوم — إنت عمري', 'أم كلثوم', 'إنت عمري', 1964, 'طرب عربي', 33, 12, 'VG+', 85000, 1, { description: 'طبعة صوت القاهرة الأصلية، الغلاف بحالة جيدة جداً.' }),
-    R('u-s1', 'فيروز — معرفتي فيك', 'فيروز', 'معرفتي فيك', 1971, 'طرب عربي', 33, 12, 'NM', 95000, 2),
-    R('u-s1', 'ناظم الغزالي — فوق النخل', 'ناظم الغزالي', 'أغاني عراقية', 1958, 'مقام عراقي', 45, 7, 'VG', 60000, 3),
-    R('u-s1', 'عبد الحليم حافظ — قارئة الفنجان', 'عبد الحليم حافظ', 'قارئة الفنجان', 1976, 'طرب عربي', 33, 12, 'VG+', 75000, 4),
-    R('u-s1', 'Miles Davis — Kind of Blue', 'Miles Davis', 'Kind of Blue', 1959, 'جاز', 33, 12, 'VG+', 120000, 5, { description: 'طبعة أوروبية من الستينات.' }),
-    R('u-s1', 'The Beatles — Abbey Road', 'The Beatles', 'Abbey Road', 1969, 'روك', 33, 12, 'VG', 110000, 6),
-    R('u-s1', 'Pink Floyd — The Dark Side of the Moon', 'Pink Floyd', 'The Dark Side of the Moon', 1973, 'روك', 33, 12, 'NM', 150000, 7, { stock: 2 }),
-    R('u-s2', 'محمد عبد الوهاب — الجندول', 'محمد عبد الوهاب', 'الجندول', 1941, 'طرب عربي', 78, 10, 'G+', 70000, 8, { description: 'أسطوانة شيلاك 78 لفة — تحتاج غرامافون أو مشغّل يدعم 78.' }),
-    R('u-s2', 'يوسف عمر — مقامات', 'يوسف عمر', 'مقامات عراقية', 1965, 'مقام عراقي', 33, 12, 'VG', 90000, 9),
-    R('u-s2', 'Louis Armstrong — What a Wonderful World', 'Louis Armstrong', 'What a Wonderful World', 1968, 'جاز', 45, 7, 'VG+', 45000, 10),
-    G('u-s2', 'غرامافون HMV بوق نحاسي', 'HMV', 'Model 32', 'very_good', true, 650000, 2, 'غرامافون بوق نحاسي أصلي، مُرمَّم بالكامل ويعمل بشكل ممتاز. يأتي مع 10 إبر.'),
-    G('u-s2', 'غرامافون حقيبة His Master\'s Voice', 'His Master\'s Voice', 'Model 102', 'good', true, 420000, 5, 'غرامافون محمول بشكل حقيبة من الأربعينات، صوت قوي ونابض.'),
-    G('u-s2', 'غرامافون Columbia للزينة', 'Columbia', 'Grafonola', 'needs_repair', false, 250000, 12, 'قطعة ديكور جميلة، النابض يحتاج تبديل.')
+    R('u-owner', 'أم كلثوم — إنت عمري', 'أم كلثوم', 'إنت عمري', 1964, 'طرب عربي', 33, 12, 'VG+', 85000, 1, { description: 'طبعة صوت القاهرة الأصلية، الغلاف بحالة جيدة جداً.' }),
+    R('u-owner', 'فيروز — معرفتي فيك', 'فيروز', 'معرفتي فيك', 1971, 'طرب عربي', 33, 12, 'NM', 95000, 2),
+    R('u-owner', 'ناظم الغزالي — فوق النخل', 'ناظم الغزالي', 'أغاني عراقية', 1958, 'مقام عراقي', 45, 7, 'VG', 60000, 3),
+    R('u-owner', 'عبد الحليم حافظ — قارئة الفنجان', 'عبد الحليم حافظ', 'قارئة الفنجان', 1976, 'طرب عربي', 33, 12, 'VG+', 75000, 4),
+    R('u-owner', 'Miles Davis — Kind of Blue', 'Miles Davis', 'Kind of Blue', 1959, 'جاز', 33, 12, 'VG+', 120000, 5, { description: 'طبعة أوروبية من الستينات.' }),
+    R('u-owner', 'The Beatles — Abbey Road', 'The Beatles', 'Abbey Road', 1969, 'روك', 33, 12, 'VG', 110000, 6),
+    R('u-owner', 'Pink Floyd — The Dark Side of the Moon', 'Pink Floyd', 'The Dark Side of the Moon', 1973, 'روك', 33, 12, 'NM', 150000, 7, { stock: 2 }),
+    R('u-owner', 'محمد عبد الوهاب — الجندول', 'محمد عبد الوهاب', 'الجندول', 1941, 'طرب عربي', 78, 10, 'G+', 70000, 8, { description: 'أسطوانة شيلاك 78 لفة — تحتاج غرامافون أو مشغّل يدعم 78.' }),
+    R('u-owner', 'يوسف عمر — مقامات', 'يوسف عمر', 'مقامات عراقية', 1965, 'مقام عراقي', 33, 12, 'VG', 90000, 9),
+    R('u-owner', 'Louis Armstrong — What a Wonderful World', 'Louis Armstrong', 'What a Wonderful World', 1968, 'جاز', 45, 7, 'VG+', 45000, 10),
+    G('u-owner', 'غرامافون HMV بوق نحاسي', 'HMV', 'Model 32', 'very_good', true, 650000, 2, 'غرامافون بوق نحاسي أصلي، مُرمَّم بالكامل ويعمل بشكل ممتاز. يأتي مع 10 إبر.'),
+    G('u-owner', 'غرامافون حقيبة His Master\'s Voice', 'His Master\'s Voice', 'Model 102', 'good', true, 420000, 5, 'غرامافون محمول بشكل حقيبة من الأربعينات، صوت قوي ونابض.'),
+    G('u-owner', 'غرامافون Columbia للزينة', 'Columbia', 'Grafonola', 'needs_repair', false, 250000, 12, 'قطعة ديكور جميلة، النابض يحتاج تبديل.')
   ];
   const orders = [], order_items = [], order_events = [];
   const O = (id, code, cust, name, phone, gov, address, items, status, d, courier_ref = '') => {
@@ -284,13 +280,13 @@ function demoSeed() {
     const flow = status === 'cancelled' ? ['new', 'cancelled'] : ORDER_FLOW.slice(0, ORDER_FLOW.indexOf(status) + 1);
     flow.forEach((s, i) => order_events.push({ id: uid() + i, order_id: id, status: s, note: '', by_user: null, created_at: ago(d - i * 0.3) }));
   };
-  products.push(R('u-s1', 'كاظم الساهر — عبرت الشط', 'كاظم الساهر', 'عبرت الشط', 1989, 'طرب عربي', 33, 12, 'VG+', 65000, 15));
-  products.push(R('u-s2', 'Elvis Presley — Love Me Tender', 'Elvis Presley', 'Love Me Tender', 1956, 'روك', 45, 7, 'VG', 55000, 16));
+  products.push(R('u-owner', 'كاظم الساهر — عبرت الشط', 'كاظم الساهر', 'عبرت الشط', 1989, 'طرب عربي', 33, 12, 'VG+', 65000, 15));
+  products.push(R('u-owner', 'Elvis Presley — Love Me Tender', 'Elvis Presley', 'Love Me Tender', 1956, 'روك', 45, 7, 'VG', 55000, 16));
   O('o-1', 'JV4F2A91', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-14'], 'delivered', 6, 'CR-10293');
   O('o-2', 'JV7B0C33', 'u-c1', 'زينب كريم', '07700000006', 'بغداد', 'الكرادة، قرب ساحة كهرمانة، بيت 12', ['p-15', 'p-3'], 'with_courier', 1, 'CR-10377');
   O('o-3', 'JV19E5D0', null, 'مصطفى جاسم', '07801234567', 'البصرة', 'العشار، شارع الكويت', ['p-2'], 'new', 0.2);
   const settings = { tagline: 'أسطوانات وغرامافونات من الزمن الجميل', announcement: '',
     contact_phone: '07700000002', courier_name: 'شركة التوصيل' };
   const fees = GOVERNORATES.map(g => ({ governorate: g, fee: g === 'بغداد' ? 5000 : ['بابل', 'كربلاء', 'النجف', 'واسط', 'ديالى', 'القادسية'].includes(g) ? 7000 : 8000, active: true }));
-  return { v: 1, profiles, sellers, products, orders, order_items, order_events, settings, fees };
+  return { v: 2, profiles, sellers, products, orders, order_items, order_events, settings, fees };
 }

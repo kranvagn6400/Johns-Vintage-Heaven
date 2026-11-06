@@ -141,7 +141,8 @@ const SupaAPI = {
     if (!ids.length) return [];
     return this.get('products', `id=in.(${ids.join(',')})&select=*,seller:sellers(shop_name)`);
   },
-  myProducts() { return this.get('products', `seller_id=eq.${this.me.id}&select=*&order=created_at.desc`); },
+  // متجر واحد: صاحب المتجر والمشرف يريان كل منتجات المتجر
+  myProducts() { return this.get('products', `${['owner', 'admin'].includes(this.me.role) ? '' : `seller_id=eq.${this.me.id}&`}select=*&order=created_at.desc`); },
   // photos: [{path}] للصور الموجودة أو [{blob}] للجديدة، بالترتيب المطلوب
   async saveProduct(p, photos) {
     const isNew = !p.id; const id = p.id || uuid(); const seller = p.seller_id || this.me.id;

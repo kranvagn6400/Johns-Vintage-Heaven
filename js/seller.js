@@ -1,5 +1,5 @@
 'use strict';
-/* ================= لوحة البائع: منتجاتي، إضافة/تعديل منتج، طلبات منتجاتي ================= */
+/* ================= المنتجات: صاحب المتجر والمشرف يضيفان ويعدّلان ويحذفان المنتجات وصورها ================= */
 const Seller = {
   staff: () => ['owner', 'admin'].includes(API.me.role),
   async route(view, seg) {
@@ -11,7 +11,7 @@ const Seller = {
     if (!s || s.status !== 'approved') return this.waiting(view, s);
     if (seg[0] === 'new') return this.form(view, null);
     if (seg[0] === 'edit') return this.form(view, seg[1]);
-    if (seg[0] === 'orders') return this.orders(view);
+    if (seg[0] === 'orders' && !this.staff()) return this.orders(view);   // صاحب المتجر والمشرف: الطلبات من «إدارة المتجر»
     return this.home(view);
   },
   async waiting(view, s) {
@@ -26,8 +26,8 @@ const Seller = {
       <button class="btn btn-ghost" style="margin-top:14px" onclick="App.route()">تحديث الحالة</button></div></div>`;
   },
   head(active) {
-    return `<div class="page-head"><h1>${this.staff() ? 'منتجاتي' : 'لوحة البائع'}</h1><span class="sp"></span><a class="btn btn-primary btn-sm" href="#/seller/new">${icon('plus')} منتج جديد</a></div>
-      <div class="tabs"><a class="tab ${active === 'products' ? 'on' : ''}" href="#/seller">منتجاتي</a><a class="tab ${active === 'orders' ? 'on' : ''}" href="#/seller/orders">طلبات منتجاتي</a></div>`;
+    return `<div class="page-head"><h1>${this.staff() ? 'المنتجات' : 'لوحة البائع'}</h1><span class="sp"></span><a class="btn btn-primary btn-sm" href="#/seller/new">${icon('plus')} منتج جديد</a></div>
+      <div class="tabs"><a class="tab ${active === 'products' ? 'on' : ''}" href="#/seller">${this.staff() ? 'المنتجات' : 'منتجاتي'}</a>${this.staff() ? '' : `<a class="tab ${active === 'orders' ? 'on' : ''}" href="#/seller/orders">طلبات منتجاتي</a>`}</div>`;
   },
   async home(view) {
     view.innerHTML = this.head('products') + UI.loading();

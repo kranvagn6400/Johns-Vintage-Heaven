@@ -7,7 +7,7 @@ const Admin = {
     view.innerHTML = `<div class="page-head"><h1>لوحة المشرف</h1></div>
       <div class="tabs">${[['users', 'الحسابات', 'users'], ['settings', 'إعدادات المتجر', 'settings'], ['system', 'النظام', 'shield']]
         .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/admin?tab=${k}">${icon(ic)} ${l}</a>`).join('')}
-        <a class="tab" href="#/seller">${icon('disc')} منتجاتي</a>
+        <a class="tab" href="#/seller">${icon('disc')} المنتجات</a>
         <a class="tab" href="#/owner">${icon('chart')} إدارة المتجر</a></div><div id="adminBody">${UI.loading()}</div>`;
     const body = $('#adminBody');
     ({ users: () => this.users(body), settings: () => this.settings(body), system: () => this.system(body) }[tab] || (() => this.users(body)))();
@@ -35,8 +35,8 @@ const Admin = {
       <div class="card"><dl class="kv"><dt>الهاتف</dt><dd class="num" style="text-align:right">${esc(u.phone)}</dd><dt>منذ</dt><dd>${fmtDay(u.created_at)}</dd>
         <dt>الدور الحالي</dt><dd>${ROLE_NAMES[u.role]}</dd></dl></div>
       <div class="card stack"><label class="lbl" for="uRole">تغيير الدور</label>
-        <select class="input" id="uRole">${UI.options(Object.keys(ROLE_NAMES), u.role, ROLE_NAMES)}</select>
-        <p class="hint">صاحب المتجر: يدير الطلبات والبائعين ورسوم التوصيل. البائع الجديد يحتاج موافقة صاحب المتجر. «موقوف» يمنع الدخول.</p>
+        <select class="input" id="uRole">${UI.options(['customer', 'owner', 'admin', 'disabled', ...(u.role === 'seller' ? ['seller'] : [])], u.role, ROLE_NAMES)}</select>
+        <p class="hint">صاحب المتجر: يضيف المنتجات ويعدّلها ويحذفها فقط. المشرف التقني: يدير كل شيء. «موقوف» يمنع الدخول.</p>
         <button class="btn btn-primary" id="saveRole">حفظ</button></div>`, 'sheet-sm');
     $('#saveRole').onclick = async () => {
       const r = $('#uRole').value; if (r === u.role) return closeSheet();
@@ -51,14 +51,12 @@ const Admin = {
       <div><label class="lbl" for="nuName">الاسم</label><input class="input" id="nuName" required></div>
       <div><label class="lbl" for="nuPhone">رقم الهاتف (يستخدمه للدخول)</label><input class="input num" id="nuPhone" type="tel" inputmode="numeric" dir="ltr" maxlength="11" placeholder="07XXXXXXXXX"></div>
       <div><label class="lbl" for="nuPass">كلمة مرور مؤقتة</label><input class="input" id="nuPass" dir="ltr" autocomplete="new-password" minlength="6"><p class="hint">أعطها لصاحب الحساب ليغيّرها من «حسابي».</p></div>
-      <div><label class="lbl" for="nuRole">الدور</label><select class="input" id="nuRole">${UI.options(['owner', 'seller', 'customer', 'admin'], 'owner', ROLE_NAMES)}</select></div>
-      <div id="nuShopW" class="hidden"><label class="lbl" for="nuShop">اسم المتجر</label><input class="input" id="nuShop"><p class="hint">البائع الذي ينشئه المشرف يُعتمد مباشرة.</p></div>
+      <div><label class="lbl" for="nuRole">الدور</label><select class="input" id="nuRole">${UI.options(['owner', 'customer', 'admin'], 'owner', ROLE_NAMES)}</select></div>
       <button class="btn btn-primary" type="submit">إنشاء الحساب</button></form>`, 'sheet-sm');
-    $('#nuRole').onchange = e => $('#nuShopW').classList.toggle('hidden', e.target.value !== 'seller');
     $('#nuPhone').oninput = e => { e.target.value = normPhone(e.target.value).slice(0, 11); };
     $('#nuForm').onsubmit = async e => {
       e.preventDefault();
-      const d = { full_name: $('#nuName').value.trim(), phone: $('#nuPhone').value, password: $('#nuPass').value, role: $('#nuRole').value, shop_name: $('#nuShop').value.trim() };
+      const d = { full_name: $('#nuName').value.trim(), phone: $('#nuPhone').value, password: $('#nuPass').value, role: $('#nuRole').value };
       if (!d.full_name) return toast('اكتب الاسم');
       if (!validPhone(d.phone)) return toast('رقم الهاتف غير صحيح');
       if (d.password.length < 6) return toast('كلمة المرور 6 أحرف على الأقل');

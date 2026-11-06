@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Johns Vintage Heaven — إعداد قاعدة بيانات Supabase (المرحلة الأولى)
--- الأدوار: admin = المشرف التقني · owner = صاحب المتجر · seller = بائع · customer = زبون
+-- الأدوار (متجر واحد): admin = المشرف التقني، يدير كل شيء · owner = صاحب المتجر، يضيف ويعدّل ويحذف المنتجات فقط · customer = زبون
 -- شغّل هذا الملف مرة واحدة في مشروع Supabase الخاص بالمتجر:
 --   SQL Editor ← New query ← الصق المحتوى كاملاً ← Run
 -- آمن لإعادة التشغيل (يستخدم if not exists / or replace).
@@ -151,6 +151,11 @@ language sql stable security definer set search_path = public as $$
 $$;
 create or replace function public.is_staff() returns boolean
 language sql stable security definer set search_path = public as $$
+  select coalesce(app_role() = 'admin', false)          -- متجر واحد: المشرف وحده يدير الطلبات والتوصيل والحسابات
+$$;
+-- إضافة المنتجات وتعديلها وحذفها: صاحب المتجر والمشرف
+create or replace function public.can_edit_products() returns boolean
+language sql stable security definer set search_path = public as $$
   select coalesce(app_role() in ('owner', 'admin'), false)
 $$;
 create or replace function public.is_admin() returns boolean
@@ -172,16 +177,10 @@ declare
 begin
   if not exists (select 1 from profiles) then
     r := 'admin';                                   -- أول حساب = المشرف التقني
-  elsif coalesce((meta->>'want_seller')::boolean, false) then
-    r := 'seller';
   end if;
   insert into profiles (id, phone, full_name, role)
   values (new.id, coalesce(meta->>'phone', ''), coalesce(meta->>'full_name', ''), r)
   on conflict (id) do nothing;
-  if r = 'seller' then
-    insert into sellers (id, shop_name, bio) values (new.id, coalesce(meta->>'shop_name', ''), '')
-    on conflict (id) do nothing;
-  end if;
   return new;
 end $$;
 drop trigger if exists on_auth_user_created on auth.users;
@@ -263,17 +262,16 @@ create policy sellers_update on public.sellers for update to authenticated
 
 drop policy if exists products_select on public.products;
 create policy products_select on public.products for select to anon, authenticated
-  using ((status in ('active', 'sold') and is_approved_seller(seller_id)) or seller_id = auth.uid() or is_staff());
+  using ((status in ('active', 'sold') and is_approved_seller(seller_id)) or can_edit_products());
 drop policy if exists products_insert on public.products;
 create policy products_insert on public.products for insert to authenticated
-  with check ((seller_id = auth.uid() and is_approved_seller(auth.uid())) or is_staff());
+  with check (can_edit_products() and (seller_id = auth.uid() or is_staff()));
 drop policy if exists products_update on public.products;
 create policy products_update on public.products for update to authenticated
-  using ((seller_id = auth.uid() and is_approved_seller(auth.uid())) or is_staff())
-  with check ((seller_id = auth.uid() and is_approved_seller(auth.uid())) or is_staff());
+  using (can_edit_products()) with check (can_edit_products());
 drop policy if exists products_delete on public.products;
 create policy products_delete on public.products for delete to authenticated
-  using ((seller_id = auth.uid() and is_approved_seller(auth.uid())) or is_staff());
+  using (can_edit_products());
 
 drop policy if exists fees_select on public.delivery_fees;
 create policy fees_select on public.delivery_fees for select to anon, authenticated using (true);
@@ -406,7 +404,7 @@ grant execute on function public.seller_orders() to authenticated;
 create or replace function public.ensure_staff_shop()
 returns void language plpgsql security definer set search_path = public as $$
 begin
-  if not is_staff() then raise exception 'ليست لديك صلاحية لهذه العملية'; end if;
+  if not can_edit_products() then raise exception 'ليست لديك صلاحية لهذه العملية'; end if;
   insert into sellers (id, shop_name, status, reviewed_by, reviewed_at)
   values (auth.uid(), 'Johns Vintage Heaven', 'approved', auth.uid(), now())
   on conflict (id) do update set status = 'approved';
@@ -421,13 +419,13 @@ on conflict (id) do update set public = true;
 drop policy if exists product_photos_insert on storage.objects;
 create policy product_photos_insert on storage.objects for insert to authenticated
   with check (bucket_id = 'product-photos' and (
-    ((storage.foldername(name))[1] = auth.uid()::text and public.is_approved_seller(auth.uid())) or public.is_staff()));
+    public.can_edit_products()));
 drop policy if exists product_photos_update on storage.objects;
 create policy product_photos_update on storage.objects for update to authenticated
   using (bucket_id = 'product-photos' and (
-    ((storage.foldername(name))[1] = auth.uid()::text and public.is_approved_seller(auth.uid())) or public.is_staff()));
+    public.can_edit_products()));
 drop policy if exists product_photos_delete on storage.objects;
 create policy product_photos_delete on storage.objects for delete to authenticated
   using (bucket_id = 'product-photos' and (
-    ((storage.foldername(name))[1] = auth.uid()::text and public.is_approved_seller(auth.uid())) or public.is_staff()));
+    public.can_edit_products()));
 -- قراءة الصور تتم عبر الرابط العام للـ bucket ولا تحتاج سياسة select.
