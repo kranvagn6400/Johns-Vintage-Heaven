@@ -37,8 +37,8 @@ const ICONS = {
 };
 const icon = (name, cls = '') => (typeof Pixel !== 'undefined' && Pixel.on() && Pixel.icons[name]) ? Pixel.icon(name, cls) : `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 
-// ألوان ملصقات الأسطوانات عندما لا توجد صورة
-const LABEL_COLORS = ['#f2c15a', '#e05a1c', '#c24a30', '#3f4a78', '#d99b2b', '#5a6aa8', '#f06a1e', '#2c3561'];   // من ألوان الشعار
+// ألوان دافئة لملصقات الأسطوانات عندما لا توجد صورة
+const LABEL_COLORS = ['#8c2f39', '#b5832f', '#2f5d50', '#5a3e7a', '#a3542b', '#26496b', '#7a6a2f', '#6b2f4f'];
 
 const UI = {
   hydrate(root = document) { $$('[data-i]', root).forEach(el => { el.outerHTML = icon(el.dataset.i, el.className); }); },
