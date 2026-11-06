@@ -80,11 +80,13 @@ create table if not exists public.settings (
   value  text not null default ''
 );
 insert into public.settings (key, value) values
-  ('tagline', 'أسطوانات وغرامافونات من الزمن الجميل'),
+  ('tagline', 'أسطوانات من الزمن الجميل'),
   ('announcement', ''),
   ('contact_phone', ''),
   ('courier_name', 'شركة التوصيل')
 on conflict (key) do nothing;
+-- العبارة القديمة تُستبدل فقط إن لم يغيّرها المشرف
+update public.settings set value = 'أسطوانات من الزمن الجميل' where key = 'tagline' and value = 'أسطوانات وغرامافونات من الزمن الجميل';
 
 -- الطلبات. طريقة الدفع الآن: cod (الدفع عند الاستلام). المرحلة الثانية: zaincash / fastpay / qi.
 create table if not exists public.orders (

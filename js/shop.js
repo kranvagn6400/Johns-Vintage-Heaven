@@ -5,7 +5,7 @@ const Shop = {
   async home(view) {
     const s = App.settings;
     view.innerHTML = `<section class="hero">
-        <div><h1><span>Johns</span> <span>Vinyl</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p></div>
+        <div><h1><span>Johns</span> <span>Vinyl</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات من الزمن الجميل')}</p></div>
         <div class="hero-art">${UI.art({ id: 'hero', kind: 'record', label: 'var(--gold-2)' }, true)}</div>
       </section>
       <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
