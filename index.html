@@ -12,6 +12,9 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preload" href="fonts/kufi-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/themes.css">
+<!-- ثيم المتجر (شعار + ألوان) يُطبَّق قبل رسم الصفحة -->
+<script src="js/themes.js"></script>
 <link rel="stylesheet" href="css/pixel.css">
 <!-- عيّنة البكسل الريترو: ?pixel=1 لتشغيلها و ?pixel=0 لإيقافها (تُحفظ في المتصفح) -->
 <script>try{var q=new URLSearchParams(location.search).get("pixel");if(q==="1")localStorage.setItem("jvh_style","\"pixel\"");if(q==="0")localStorage.removeItem("jvh_style");if(localStorage.getItem("jvh_style")==="\"pixel\""){document.documentElement.classList.add("pixel");document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">')}}catch(e){}</script>
@@ -22,8 +25,8 @@
 <header id="topbar">
   <div class="tb-in">
     <a class="brand" href="#/">
-      <img class="brand-mark" src="logo.png" alt="">
-      <span class="brand-name">Johns Vinyl Heaven<small>أسطوانات وغرامافونات</small></span>
+      <img class="brand-mark" src="logos/classic.png" alt="" data-logo>
+      <span class="brand-name">Johns Vinyl Heaven<small class="brand-tag">Let the music spin</small></span>
     </a>
     <nav class="tb-nav" id="tbNav"></nav>
     <div class="tb-actions">
@@ -33,6 +36,7 @@
     </div>
   </div>
 </header>
+<script>Themes.apply(Themes.current())</script>
 <div id="demoBar" class="demo-bar hidden"></div>
 <div id="announce" class="announce hidden"></div>
 

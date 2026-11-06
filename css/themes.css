@@ -1,0 +1,99 @@
+/* ================= ثيمات المتجر (الشعار + الألوان) =================
+   يختارها صاحب المتجر أو المشرف من «حسابي» ← «شعار وألوان المتجر»، وتُحفظ في settings.store_theme.
+   «classic» هو ألوان app.css نفسها. هنا الثيمات الأخرى فقط، على <html data-store="…">.
+   أسماء المتغيرات قديمة: --wine = لون الأزرار الرئيسية، --gold = اللون الذهبي/المميّز، --espresso = لون الشريط العلوي والواجهة. */
+
+/* ---------- ألوان الشعار: كحلي، خردلي، برتقالي ---------- */
+:root[data-store="logo"]{
+  --paper:#f6efdc; --paper-2:#ede3c6; --card:#fffaf0; --card-2:#f8f0dc;
+  --ink:#22284a; --ink-2:#3a4168; --muted:#6e7090; --faint:#a3a3b8; --line:#e3d8bc; --line-2:#ece3cb;
+  --wine:#e05a1c; --wine-2:#b9461a; --wine-soft:#fbe0d0; --on-wine:#fff8ee;
+  --gold:#c98a1e; --gold-2:#f2c15a; --gold-soft:#fbedc6;
+  --espresso:#2c3561; --espresso-2:#3a4475; --on-espresso:#f6efdc;
+  --danger:#c24a30; --info:#3f4a78; --art-bg:#efe2bf;
+  --gold-rgb:242,193,90; --on-espresso-2:#e9e3cf; --on-espresso-3:#d9d2b8; --hero-glow:#4a5690; --hero-line:#4b568a; --on-gold:#fff8ee; --gold-shadow:#8a5e12}
+@media (prefers-color-scheme:dark){:root[data-store="logo"]:not([data-theme="light"]){
+  --paper:#12152a; --paper-2:#181c35; --card:#1d2140; --card-2:#242a4c;
+  --ink:#f3ecd8; --ink-2:#dcd5bf; --muted:#9a9cb8; --faint:#6b6e8c; --line:#2e345a; --line-2:#262b4c;
+  --wine:#f07a3a; --wine-2:#d9622a; --wine-soft:#3a2216; --on-wine:#1a0d06;
+  --gold:#f2c15a; --gold-2:#f5cf7a; --gold-soft:#3a3018; --espresso:#0c0f20; --espresso-2:#161a33;
+  --danger:#e57a63; --info:#8fa0dc; --art-bg:#222744; --hero-glow:#26305a; --hero-line:#2e365e}}
+:root[data-store="logo"][data-theme="dark"]{
+  --paper:#12152a; --paper-2:#181c35; --card:#1d2140; --card-2:#242a4c;
+  --ink:#f3ecd8; --ink-2:#dcd5bf; --muted:#9a9cb8; --faint:#6b6e8c; --line:#2e345a; --line-2:#262b4c;
+  --wine:#f07a3a; --wine-2:#d9622a; --wine-soft:#3a2216; --on-wine:#1a0d06;
+  --gold:#f2c15a; --gold-2:#f5cf7a; --gold-soft:#3a3018; --espresso:#0c0f20; --espresso-2:#161a33;
+  --danger:#e57a63; --info:#8fa0dc; --art-bg:#222744; --hero-glow:#26305a; --hero-line:#2e365e}
+
+/* ---------- زيتوني: أخضر زيتوني وذهبي ---------- */
+:root[data-store="olive"]{
+  --paper:#f1ecdc; --paper-2:#e6dfc8; --card:#fbf8ee; --card-2:#f3eedf;
+  --ink:#1f261c; --ink-2:#3a4434; --muted:#6f7764; --faint:#a4a993; --line:#ddd6bd; --line-2:#e8e2cc;
+  --wine:#4f6b3a; --wine-2:#3b5229; --wine-soft:#e2ead8; --on-wine:#f8f5ea;
+  --gold:#a8862f; --gold-2:#d4b46a; --gold-soft:#f1e7c6;
+  --espresso:#1f2a1e; --espresso-2:#2b3829; --on-espresso:#efe8d2; --art-bg:#e3dcc2;
+  --gold-rgb:212,180,106; --on-espresso-2:#ddd6bd; --on-espresso-3:#bfb895; --hero-glow:#34472f; --hero-line:#3a4a35; --on-gold:#fffbef; --gold-shadow:#7a6020}
+@media (prefers-color-scheme:dark){:root[data-store="olive"]:not([data-theme="light"]){
+  --paper:#121610; --paper-2:#181d15; --card:#1e241a; --card-2:#252c20;
+  --ink:#eef0e4; --ink-2:#d6dac8; --muted:#9aa38c; --faint:#6c7460; --line:#313a2a; --line-2:#283022;
+  --wine:#8fb36f; --wine-2:#769a58; --wine-soft:#23301a; --on-wine:#10150c;
+  --gold:#d4b46a; --gold-2:#e2c585; --gold-soft:#33301a; --espresso:#0b0e09; --espresso-2:#151a12;
+  --art-bg:#232a1e; --hero-glow:#22301f; --hero-line:#2c3a29}}
+:root[data-store="olive"][data-theme="dark"]{
+  --paper:#121610; --paper-2:#181d15; --card:#1e241a; --card-2:#252c20;
+  --ink:#eef0e4; --ink-2:#d6dac8; --muted:#9aa38c; --faint:#6c7460; --line:#313a2a; --line-2:#283022;
+  --wine:#8fb36f; --wine-2:#769a58; --wine-soft:#23301a; --on-wine:#10150c;
+  --gold:#d4b46a; --gold-2:#e2c585; --gold-soft:#33301a; --espresso:#0b0e09; --espresso-2:#151a12;
+  --art-bg:#232a1e; --hero-glow:#22301f; --hero-line:#2c3a29}
+
+/* ---------- فيروزي: أزرق مخضر وذهبي ومرجاني ---------- */
+:root[data-store="teal"]{
+  --paper:#eef3f1; --paper-2:#dfe9e6; --card:#fafcfb; --card-2:#eef4f2;
+  --ink:#12262b; --ink-2:#2c4449; --muted:#61777b; --faint:#9fb1b3; --line:#d3e0dd; --line-2:#e2ebe9;
+  --wine:#0f7c80; --wine-2:#0a5e61; --wine-soft:#d6ecec; --on-wine:#f4fbfa;
+  --gold:#b8862b; --gold-2:#e0b25a; --gold-soft:#f5e8c8;
+  --espresso:#0f2a33; --espresso-2:#173a45; --on-espresso:#e8f1ef; --danger:#c2562e; --art-bg:#d9e6e3;
+  --gold-rgb:224,178,90; --on-espresso-2:#cfe0dd; --on-espresso-3:#a9c3c0; --hero-glow:#1d4b57; --hero-line:#24505b; --on-gold:#fffaf0; --gold-shadow:#7f5c1a}
+@media (prefers-color-scheme:dark){:root[data-store="teal"]:not([data-theme="light"]){
+  --paper:#0b1518; --paper-2:#101c20; --card:#142328; --card-2:#1a2c32;
+  --ink:#e8f1ef; --ink-2:#cfe0dd; --muted:#8fa7aa; --faint:#5f7579; --line:#24393f; --line-2:#1e3237;
+  --wine:#3fb8bb; --wine-2:#2a9a9d; --wine-soft:#123336; --on-wine:#061314;
+  --gold:#e0b25a; --gold-2:#ebc679; --gold-soft:#33291a; --espresso:#071013; --espresso-2:#0f1b1f;
+  --danger:#e8805c; --art-bg:#17282d; --hero-glow:#123a44; --hero-line:#1c3d46}}
+:root[data-store="teal"][data-theme="dark"]{
+  --paper:#0b1518; --paper-2:#101c20; --card:#142328; --card-2:#1a2c32;
+  --ink:#e8f1ef; --ink-2:#cfe0dd; --muted:#8fa7aa; --faint:#5f7579; --line:#24393f; --line-2:#1e3237;
+  --wine:#3fb8bb; --wine-2:#2a9a9d; --wine-soft:#123336; --on-wine:#061314;
+  --gold:#e0b25a; --gold-2:#ebc679; --gold-soft:#33291a; --espresso:#071013; --espresso-2:#0f1b1f;
+  --danger:#e8805c; --art-bg:#17282d; --hero-glow:#123a44; --hero-line:#1c3d46}
+
+/* ---------- جوك بوكس: أحمر وأسود وأصفر ---------- */
+:root[data-store="jukebox"]{
+  --paper:#f5f1ea; --paper-2:#e9e2d6; --card:#fffdf9; --card-2:#f6f1e8;
+  --ink:#161616; --ink-2:#333333; --muted:#6e6a64; --faint:#a8a39b; --line:#e2dacd; --line-2:#ece6db;
+  --wine:#c8102e; --wine-2:#9a0c23; --wine-soft:#f8d9dd; --on-wine:#ffffff;
+  --gold:#b8901f; --gold-2:#e8c547; --gold-soft:#f8edc4;
+  --espresso:#141414; --espresso-2:#222222; --on-espresso:#f3eee4; --art-bg:#e6dfd2;
+  --gold-rgb:232,197,71; --on-espresso-2:#ddd5c6; --on-espresso-3:#b8ae9c; --hero-glow:#3a1015; --hero-line:#333333; --on-gold:#ffffff; --gold-shadow:#7a5f10}
+@media (prefers-color-scheme:dark){:root[data-store="jukebox"]:not([data-theme="light"]){
+  --paper:#0f0f0f; --paper-2:#161616; --card:#1c1c1c; --card-2:#242424;
+  --ink:#f3eee4; --ink-2:#ddd5c6; --muted:#a29d95; --faint:#6f6a63; --line:#333333; --line-2:#2a2a2a;
+  --wine:#ff4d5e; --wine-2:#e03445; --wine-soft:#3a1418; --on-wine:#1a0507;
+  --gold:#e8c547; --gold-2:#f0d36c; --gold-soft:#3a3214; --espresso:#080808; --espresso-2:#141414;
+  --art-bg:#222222; --hero-glow:#2a0b10; --hero-line:#2a2a2a}}
+:root[data-store="jukebox"][data-theme="dark"]{
+  --paper:#0f0f0f; --paper-2:#161616; --card:#1c1c1c; --card-2:#242424;
+  --ink:#f3eee4; --ink-2:#ddd5c6; --muted:#a29d95; --faint:#6f6a63; --line:#333333; --line-2:#2a2a2a;
+  --wine:#ff4d5e; --wine-2:#e03445; --wine-soft:#3a1418; --on-wine:#1a0507;
+  --gold:#e8c547; --gold-2:#f0d36c; --gold-soft:#3a3214; --espresso:#080808; --espresso-2:#141414;
+  --art-bg:#222222; --hero-glow:#2a0b10; --hero-line:#2a2a2a}
+
+/* ---------- بطاقات اختيار الثيم ---------- */
+.store-themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.st-opt{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 10px;border:2px solid var(--line);border-radius:var(--r);background:var(--card);cursor:pointer;text-align:center}
+.st-opt img{width:84px;height:84px;object-fit:contain}
+.st-opt b{font-size:14px}
+.st-opt .sw{display:flex;gap:4px}
+.st-opt .sw i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.st-opt.on{border-color:var(--wine);box-shadow:0 0 0 3px var(--wine-soft)}
+.st-opt.on::after{content:"✓";position:absolute;top:6px;left:8px;font-weight:800;color:var(--wine)}

@@ -24,6 +24,7 @@ const App = {
   async loadSettings() {
     try {
       this.settings = await API.settings();
+      Themes.apply(this.settings.store_theme);   // شعار وألوان المتجر كما اختارها صاحب المتجر أو المشرف
       const a = $('#announce'); a.textContent = this.settings.announcement || ''; a.classList.toggle('hidden', !this.settings.announcement);
     } catch (e) { console.warn(e); }
   },
@@ -95,7 +96,7 @@ const App = {
     if (API.me) return this.go('#/account');
     const signup = mode === 'signup', asSeller = this.params.get('seller') === '1';
     view.innerHTML = `<div class="auth"><div class="card">
-      <div class="auth-head"><img src="logo.png" alt="" width="96" height="96" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'دخول الإدارة'}</h1>
+      <div class="auth-head"><img src="${Themes.list[Themes.current()].logo}" data-logo alt="" width="96" height="96" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'دخول الإدارة'}</h1>
         <p class="muted small">${signup ? 'تسوّق وتتبّع طلباتك' : 'لصاحب المتجر والمشرف فقط'}</p></div>
       <form id="authForm" class="stack" novalidate>
         ${signup ? `<div><label class="lbl" for="fName">الاسم الكامل <span class="req">*</span></label><input class="input" id="fName" autocomplete="name" required></div>` : ''}
@@ -167,11 +168,13 @@ const App = {
         <input class="input" id="pw1" type="password" dir="ltr" autocomplete="new-password" placeholder="كلمة مرور جديدة (6 على الأقل)">
         <button class="btn btn-ghost" type="submit">تغيير كلمة المرور</button></form></div>
       ${this.themeCard()}
+      ${['owner', 'admin'].includes(me.role) ? this.storeThemeCard() : ''}
       <div class="card"><div class="stack">
         <button class="btn btn-danger" id="logout">${icon('logout')} تسجيل الخروج</button>
         ${API.mode === 'demo' ? '<button class="btn btn-ghost btn-sm" id="resetDemo">إعادة ضبط البيانات التجريبية</button>' : ''}
       </div></div></div></div>`;
     this.bindTheme(view);
+    this.bindStoreTheme(view);
     $('#meForm').onsubmit = async e => {
       e.preventDefault(); busy(true);
       try { await API.updateMe({ full_name: $('#mName').value.trim(), ...(seller ? { shop_name: $('#mShop').value.trim(), bio: $('#mBio').value.trim() } : {}) }); toast('تم الحفظ'); }
@@ -191,6 +194,23 @@ const App = {
     const t = store.get('theme', 'auto');
     return `<div class="card"><h3>المظهر</h3><div class="seg" id="themeSeg">
       ${[['auto', 'تلقائي'], ['light', 'فاتح'], ['dark', 'داكن']].map(([v, l]) => `<label><input type="radio" name="theme" value="${v}" ${t === v ? 'checked' : ''}>${l}</label>`).join('')}</div></div>`;
+  },
+  // شعار وألوان المتجر: يختارها صاحب المتجر أو المشرف وتظهر لكل الزبائن
+  storeThemeCard() {
+    const cur = Themes.current();
+    return `<div class="card"><h3>شعار وألوان المتجر</h3><p class="muted small">يتغيّر الشعار وألوان الموقع لكل الزبائن فور الاختيار.</p>
+      <div class="store-themes">${Object.entries(Themes.list).map(([id, t]) => `<button type="button" class="st-opt ${id === cur ? 'on' : ''}" data-store-theme="${id}">
+        <img src="${t.logo}" alt=""><b>${esc(t.name)}</b><span class="muted small">${esc(t.note)}</span>
+        <span class="sw">${t.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div></div>`;
+  },
+  bindStoreTheme(view) {
+    $$('[data-store-theme]', view).forEach(b => b.onclick = async () => {
+      const id = b.dataset.storeTheme, prev = Themes.current();
+      if (id === prev) return;
+      Themes.apply(id); $$('[data-store-theme]', view).forEach(x => x.classList.toggle('on', x === b));
+      try { await API.saveStoreTheme(id); this.settings.store_theme = id; toast('تم تغيير شعار وألوان المتجر'); }
+      catch (e) { Themes.apply(prev); $$('[data-store-theme]', view).forEach(x => x.classList.toggle('on', x.dataset.storeTheme === prev)); toast(e.message); }
+    });
   },
   bindTheme(view) {
     $$('input[name=theme]', view).forEach(r => r.onchange = () => {
