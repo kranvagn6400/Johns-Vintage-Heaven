@@ -5,32 +5,27 @@ const Shop = {
   async home(view) {
     const s = App.settings;
     view.innerHTML = `<section class="hero">
-        <div><h1><span>Johns</span> <span>Vintage</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p>
-          <div class="row-btns"><a class="btn btn-gold" href="#/shop?kind=record">${icon('disc')} تصفّح الأسطوانات</a>
-          <a class="btn btn-gold" href="#/shop?kind=gramophone">${icon('gramophone')} الغرامافونات</a></div></div>
+        <div><h1><span>Johns</span> <span>Vintage</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات وغرامافونات من الزمن الجميل')}</p></div>
         <div class="hero-art">${UI.art({ id: 'hero', kind: 'record', label: 'var(--gold-2)' }, true)}</div>
       </section>
       <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
         <button class="btn btn-primary" type="submit" aria-label="بحث">${icon('search')}</button></form>
-      <div class="cats">
-        <a class="cat" href="#/shop?kind=record">${icon('disc')}<span><b>الأسطوانات</b></span></a>
-        <a class="cat" href="#/shop?kind=cd">${icon('disc')}<span><b>أقراص CD</b></span></a>
-        <a class="cat" href="#/shop?kind=gramophone">${icon('gramophone')}<span><b>الغرامافونات</b></span></a>
-      </div>
       <div class="section"><h2>وصل حديثاً</h2><a href="#/shop">عرض الكل</a></div>
       <div id="latest">${UI.loading()}</div>
-      <div class="section"><h2>غرامافونات</h2><a href="#/shop?kind=gramophone">عرض الكل</a></div>
-      <div id="gramos">${UI.loading()}</div>
+      <div id="kinds"></div>
       <div class="dash-grid" style="margin-top:26px">
         <div class="card"><h3>${icon('truck')} توصيل لكل العراق</h3><p class="muted small">التوصيل لكل المحافظات عبر شركة توصيل معتمدة، والدفع نقداً عند الاستلام.</p></div>
       </div>
       ${this.footer()}`;
     $('#homeSearch').onsubmit = e => { e.preventDefault(); App.go('#/shop?q=' + encodeURIComponent($('#hq').value.trim())); };
     try {
-      const [a, b] = await Promise.all([API.products({ limit: 8 }), API.products({ kind: 'gramophone', limit: 4 })]);
-      $('#latest').innerHTML = a.rows.length ? `<div class="grid">${a.rows.map(p => UI.card(p)).join('')}</div>` : UI.empty('disc', 'لا توجد منتجات بعد', 'ستظهر هنا المنتجات فور إضافتها من البائعين.');
-      $('#gramos').innerHTML = b.rows.length ? `<div class="grid">${b.rows.map(p => UI.card(p)).join('')}</div>` : UI.empty('gramophone', 'لا توجد غرامافونات معروضة الآن');
-    } catch (e) { $('#latest').innerHTML = UI.error(e); $('#gramos').innerHTML = ''; }
+      // «وصل حديثاً» العام، ثم «وصل حديثاً» لكل قسم (القسم الفارغ لا يظهر)
+      const kinds = ['record', 'cd', 'gramophone'];
+      const [a, ...per] = await Promise.all([API.products({ limit: 8 }), ...kinds.map(kind => API.products({ kind, limit: 4 }))]);
+      $('#latest').innerHTML = a.rows.length ? `<div class="grid">${a.rows.map(p => UI.card(p)).join('')}</div>` : UI.empty('disc', 'لا توجد منتجات بعد', 'ستظهر هنا المنتجات فور إضافتها.');
+      $('#kinds').innerHTML = kinds.map((k, i) => per[i].rows.length ? `<div class="section"><h2>${KIND_PLURAL[k]} — وصل حديثاً</h2><a href="#/shop?kind=${k}">عرض الكل</a></div>
+        <div class="grid">${per[i].rows.map(p => UI.card(p)).join('')}</div>` : '').join('');
+    } catch (e) { $('#latest').innerHTML = UI.error(e); }
   },
   footer() {
     const s = App.settings;
