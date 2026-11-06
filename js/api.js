@@ -150,14 +150,18 @@ const SupaAPI = {
     for (const ph of photos) {
       if (ph.path) { paths.push(ph.path); continue; }
       const path = `${seller}/${id}/${uid()}.jpg`;
+      // بدون x-upsert: الاسم فريد دائماً، و upsert يحتاج صلاحية قراءة وتعديل إضافية في Storage
       await this.req(`/storage/v1/object/product-photos/${path}`, { method: 'POST', body: ph.blob,
-        headers: { 'Content-Type': 'image/jpeg', 'x-upsert': 'true', 'cache-control': '31536000' } });
+        headers: { 'Content-Type': 'image/jpeg', 'cache-control': '31536000' } })
+        .catch(e => { e.message = 'تعذّر رفع الصورة: ' + e.message; throw e; });
       paths.push(path);
     }
     const row = productRow({ ...p, id, seller_id: seller, photos: paths });
     let saved;
-    if (isNew) saved = (await this.req('/rest/v1/products', { method: 'POST', body: row, headers: { Prefer: 'return=representation' } }))[0];
-    else { const { id: _, seller_id, ...rest } = row; saved = await this.patch('products', `id=eq.${id}`, rest); }
+    try {
+      if (isNew) saved = (await this.req('/rest/v1/products', { method: 'POST', body: row, headers: { Prefer: 'return=representation' } }))[0];
+      else { const { id: _, seller_id, ...rest } = row; saved = await this.patch('products', `id=eq.${id}`, rest); }
+    } catch (e) { e.message = 'تعذّر حفظ المنتج: ' + e.message; throw e; }
     const removed = (p.photos || []).filter(x => !paths.includes(x));
     if (removed.length) this.req('/storage/v1/object/product-photos', { method: 'DELETE', body: { prefixes: removed } }).catch(() => {});
     return saved;

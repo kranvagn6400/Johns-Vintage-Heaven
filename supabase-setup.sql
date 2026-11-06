@@ -428,4 +428,8 @@ drop policy if exists product_photos_delete on storage.objects;
 create policy product_photos_delete on storage.objects for delete to authenticated
   using (bucket_id = 'product-photos' and (
     public.can_edit_products()));
--- قراءة الصور تتم عبر الرابط العام للـ bucket ولا تحتاج سياسة select.
+-- الزبائن يرون الصور عبر الرابط العام للـ bucket. لكن الحذف والاستبدال في Storage يحتاجان أيضاً صلاحية select
+-- لمن يدير المنتجات، وإلا رُفضت العملية بخطأ RLS.
+drop policy if exists product_photos_select on storage.objects;
+create policy product_photos_select on storage.objects for select to authenticated
+  using (bucket_id = 'product-photos' and public.can_edit_products());
