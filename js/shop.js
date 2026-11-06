@@ -10,12 +10,12 @@ const Shop = {
           <a class="btn btn-px" href="#/shop?kind=gramophone">${Pixel.icon('gramophone')} الغرامافونات</a></div></div>
         <div class="hero-art">${UI.art({ id: 'hero', kind: 'record' }, true)}</div>
       </section>
-      <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان، ألبوم، أو ماركة غرامافون…" enterkeyhint="search">
+      <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
         <button class="btn btn-primary" type="submit" aria-label="بحث">${icon('search')}</button></form>
       <div class="cats">
-        <a class="cat" href="#/shop?kind=record">${icon('disc')}<span><b>الأسطوانات</b><small>فينيل 33 · 45 · 78</small></span></a>
-        <a class="cat" href="#/shop?kind=cd">${icon('disc')}<span><b>أقراص CD</b><small>ألبومات وأغانٍ</small></span></a>
-        <a class="cat" href="#/shop?kind=gramophone">${icon('gramophone')}<span><b>الغرامافونات</b><small>أصلية ومُرمَّمة</small></span></a>
+        <a class="cat" href="#/shop?kind=record">${icon('disc')}<span><b>الأسطوانات</b></span></a>
+        <a class="cat" href="#/shop?kind=cd">${icon('disc')}<span><b>أقراص CD</b></span></a>
+        <a class="cat" href="#/shop?kind=gramophone">${icon('gramophone')}<span><b>الغرامافونات</b></span></a>
       </div>
       <div class="section"><h2>وصل حديثاً</h2><a href="#/shop">عرض الكل</a></div>
       <div id="latest">${UI.loading()}</div>
