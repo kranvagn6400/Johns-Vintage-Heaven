@@ -19,7 +19,8 @@ const Themes = {
     const t = this.list[id], root = document.documentElement;
     if (id === 'classic') root.removeAttribute('data-store'); else root.dataset.store = id;
     try { localStorage.setItem('jvh_store_theme', JSON.stringify(id)); } catch {}
-    document.querySelectorAll('img[data-logo]').forEach(img => { if (img.getAttribute('src') !== t.logo) img.src = t.logo; });
+    // <img data-logo> في الشريط وصفحة الدخول، و<image data-logo> ملصق أسطوانة الواجهة
+    document.querySelectorAll('[data-logo]').forEach(el => { const a = el.tagName.toLowerCase() === 'img' ? 'src' : 'href'; if (el.getAttribute(a) !== t.logo) el.setAttribute(a, t.logo); });
     const fav = document.querySelector('link[rel="icon"]'); if (fav) fav.href = t.logo;
     const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = t.bar;
     return id;

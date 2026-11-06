@@ -6,7 +6,7 @@ const Shop = {
     const s = App.settings;
     view.innerHTML = `<section class="hero">
         <div><h1><span>Johns</span> <span>Vinyl</span> <span>Heaven</span></h1><p>${esc(s.tagline || 'أسطوانات من الزمن الجميل')}</p></div>
-        <div class="hero-art">${UI.art({ id: 'hero', kind: 'record', label: 'var(--gold-2)' }, true)}</div>
+        <div class="hero-art">${UI.art({ id: 'hero', kind: 'record', logo: Themes.list[Themes.current()].logo }, true)}</div>
       </section>
       <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
         <button class="btn btn-primary" type="submit" aria-label="بحث">${icon('search')}</button></form>

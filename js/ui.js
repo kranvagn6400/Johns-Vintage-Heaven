@@ -70,8 +70,11 @@ const UI = {
       <circle cx="100" cy="100" r="84" fill="#17110c"/>
       ${[74, 66, 58, 50, 42].map(r => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.2"/>`).join('')}
       <path d="M46.3 46.3 A76 76 0 0 1 100 24" stroke="rgba(255,255,255,.16)" stroke-width="8" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="100" r="30" fill="${c}"/><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
-      <circle cx="100" cy="100" r="3.5" fill="#f3e8d2"/></svg>`;
+      ${p.logo
+        // أسطوانة الواجهة: شعار المتجر هو الملصق (يتبدّل مع ثيم المتجر عبر data-logo)
+        ? `<image href="${esc(p.logo)}" data-logo x="58" y="58" width="84" height="84" preserveAspectRatio="xMidYMid meet"/>`
+        : `<circle cx="100" cy="100" r="30" fill="${c}"/><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>`}
+      <circle cx="100" cy="100" r="${p.logo ? 2.5 : 3.5}" fill="#f3e8d2"/></svg>`;
   },
   photo(p, i = 0) {
     const path = p.photos && p.photos[i];
