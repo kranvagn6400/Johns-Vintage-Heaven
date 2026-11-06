@@ -139,7 +139,7 @@ const DemoAPI = {
       if (p.stock < it.qty) throw new Error('الكمية غير متوفرة: ' + p.title);
       return { p, qty: Math.max(1, it.qty) };
     });
-    let code; do { code = 'JV' + Math.random().toString(16).slice(2, 8).toUpperCase(); } while (this.db.orders.some(o => o.code === code));
+    let code; do { code = String(10000000 + Math.floor(Math.random() * 90000000)); } while (this.db.orders.some(o => o.code === code));
     const id = uuid(), now = new Date().toISOString();
     let sub = 0;
     for (const { p, qty } of lines) {

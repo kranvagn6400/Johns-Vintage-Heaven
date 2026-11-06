@@ -260,12 +260,12 @@ const Shop = {
     const last = store.get('last_order', {});
     view.innerHTML = `<div class="page-head"><h1>تتبّع طلب</h1></div>
       <div class="dash-grid"><div class="card"><form id="tForm" class="stack">
-        <div><label class="lbl" for="tCode">رمز الطلب</label><input class="input num" id="tCode" dir="ltr" placeholder="JV1A2B3C" value="${esc(last.code || '')}" autocapitalize="characters"></div>
+        <div><label class="lbl" for="tCode">رمز الطلب</label><input class="input num" id="tCode" dir="ltr" inputmode="numeric" placeholder="مثال: 48213957" value="${esc(last.code || '')}"></div>
         <div><label class="lbl" for="tPhone">رقم الهاتف المستخدم في الطلب</label><input class="input num" id="tPhone" type="tel" inputmode="numeric" dir="ltr" maxlength="11" value="${esc(last.phone || '')}"></div>
         <button class="btn btn-primary" type="submit">${icon('search')} عرض حالة الطلب</button></form></div>
       <div id="tResult"></div></div>`;
     const run = async () => {
-      const code = $('#tCode').value.trim(), phone = $('#tPhone').value;
+      const code = toLatinDigits($('#tCode').value).trim(), phone = $('#tPhone').value;
       if (!code || !validPhone(phone)) return toast('اكتب رمز الطلب ورقم الهاتف');
       $('#tResult').innerHTML = UI.loading();
       try {
@@ -278,7 +278,7 @@ const Shop = {
   },
   orderCard(o, opts = {}) {
     return `<div class="card"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <h3 style="margin:0" class="num">${esc(o.code)}</h3>${UI.orderPill(o.status)}<span class="sp" style="flex:1"></span><span class="muted small">${fmtDate(o.created_at)}</span></div>
+        <h3 style="margin:0" class="num">${esc(o.code)}</h3>${UI.orderPill(o.status)}</div>
       <div class="order-items">${(o.items || []).map(i => `<div><span>${esc(i.title)}${i.qty > 1 ? ` × ${i.qty}` : ''}</span><span>${fmtIQD(i.price * i.qty)}</span></div>`).join('')}
         <div class="muted"><span>التوصيل (${esc(o.governorate)})</span><span>${fmtIQD(o.delivery_fee)}</span></div>
         <div style="font-weight:800"><span>الإجمالي · ${PAYMENT_METHODS[o.payment_method]}</span><span>${fmtIQD(o.total)}</span></div></div>

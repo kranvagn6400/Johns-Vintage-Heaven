@@ -98,9 +98,8 @@ const UI = {
     if (o.status === 'cancelled') return `<div class="timeline cancelled">${icon('x')} أُلغي هذا الطلب</div>`;
     const at = ORDER_FLOW.indexOf(o.status);
     return `<ol class="timeline">${ORDER_FLOW.map((s, i) => {
-      const e = events.filter(x => x.status === s).pop();
       return `<li class="${i < at ? 'done' : i === at ? 'now' : ''}"><span class="dot">${i <= at ? icon('check') : ''}</span>
-        <b>${ORDER_STATUS[s]}</b>${e ? `<small>${fmtDate(e.created_at)}</small>` : ''}</li>`;
+        <b>${ORDER_STATUS[s]}</b></li>`;
     }).join('')}</ol>`;
   },
   empty(ic, title, sub = '', action = '') {

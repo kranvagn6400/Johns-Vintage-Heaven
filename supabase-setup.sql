@@ -319,7 +319,7 @@ begin
   if jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) = 0 then raise exception 'السلة فارغة'; end if;
 
   loop
-    v_code := 'JV' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
+    v_code := (10000000 + floor(random() * 90000000))::bigint::text;   -- رمز من 8 أرقام فقط، فريد (القيد unique + التحقق أدناه)
     exit when not exists (select 1 from orders where code = v_code);
   end loop;
   insert into orders (code, customer_id, name, phone, governorate, address, notes, delivery_fee)
