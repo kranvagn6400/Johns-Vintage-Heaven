@@ -1,4 +1,4 @@
-# Johns Vintage Heaven — multi-seller vinyl & gramophone marketplace (PWA)
+# Johns Vinyl Heaven — single-store vinyl & gramophone marketplace (PWA)
 
 Arabic RTL storefront (brand name stays English) for vinyl records and gramophones in Iraq. Plain JS, no build
 step, no npm dependencies; scripts share globals (`$`, `API`, `UI`, `Cart`, `Shop`, `Seller`, `Owner`, `Admin`, `App`).
@@ -23,7 +23,7 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   `canEdit()`). No delivery fees, sales, settings or accounts. Created by admin. Lands on #/owner (orders) after login.
 - No sellers: signup creates customers only; seller signup, seller dashboard tabs and the «البائعون» review list are gone.
   The `seller` role value and `sellers` table remain only as the products' shop (`products.seller_id`): owner/admin get an
-  approved shop named Johns Vintage Heaven via `API.ensureShop()` → RPC `ensure_staff_shop`. Owner and admin see and edit
+  approved shop named Johns Vinyl Heaven via `API.ensureShop()` → RPC `ensure_staff_shop`. Owner and admin see and edit
   ALL store products (`myProducts` drops the seller filter for them).
 - SQL: `is_staff()` now means admin only; `can_edit_products()` = owner|admin (products RLS, storage policies, ensure_staff_shop).
   Demo mirrors this with `isStaff()` (admin) and `canEdit()` (owner|admin); demo DB version 2 (no seller accounts).
@@ -71,7 +71,7 @@ English brand, Kufi (OFL, fonts/) for Arabic. Light/dark tokens on `:root` (auto
 Sample style (not default): `?pixel=1` adds class `pixel` on <html> (saved in localStorage `jvh_style`, `?pixel=0` off) →
 css/pixel.css (arcade-poster look, palette #F3620F #FFC20A #67944B #078D8C #084973 #DA0D1E as --po/--py/--pg/--pt/--pb/--pr;
 never name vars --r etc., app.css uses --r for radius) + js/pixel.js (12×12 pixel icons, pixel record/gramophone art via `icon()`/`UI.art`).
-Mobile-first: bottom nav < 900px, top nav ≥ 900px. Icons regenerated with `node tools/make-icons.js`.
+Mobile-first: bottom nav < 900px, top nav ≥ 900px. Brand = «Johns Vinyl Heaven» (renamed from Vintage 2026-11-06; folder, repo, `jvh_` keys and `EMAIL_DOMAIN` johnsvintageheaven.app stay — changing the domain would break staff logins). Real logo = logo.png (transparent, header + login); favicon.png, icon-192/512.png (logo on cream) were made from the friend's logo image; tools/make-icons.js and icon.svg are the old placeholder.
 
 ## Designer edit mode
 `?edit=1` (off: `?edit=0` or «إنهاء») loads js/picker.js tooling: the user clicks elements and writes change notes, saved in

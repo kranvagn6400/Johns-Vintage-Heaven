@@ -1,9 +1,9 @@
 // عامل الخدمة: يحفظ ملفات الموقع ليفتح بسرعة وحتى مع ضعف الإنترنت
 // غيّر رقم الإصدار CACHE عند أي تعديل على ملفات JS/CSS/HTML
-const CACHE = 'jvh-v25';
+const CACHE = 'jvh-v26';
 const ASSETS = ['./', './index.html', './config.js', './css/app.css', './css/pixel.css', './js/util.js', './js/ui.js', './js/pixel.js', './js/api.js', './js/demo.js',
   './js/shop.js', './js/seller.js', './js/owner.js', './js/admin.js', './js/app.js', './js/picker.js',
-  './fonts/kufi-arabic.woff2', './fonts/kufi-latin.woff2', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
+  './fonts/kufi-arabic.woff2', './fonts/kufi-latin.woff2', './manifest.webmanifest', './logo.png', './favicon.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));

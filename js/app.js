@@ -95,7 +95,7 @@ const App = {
     if (API.me) return this.go('#/account');
     const signup = mode === 'signup', asSeller = this.params.get('seller') === '1';
     view.innerHTML = `<div class="auth"><div class="card">
-      <div class="auth-head"><img src="icon.svg" alt="" width="64" height="64" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'دخول الإدارة'}</h1>
+      <div class="auth-head"><img src="logo.png" alt="" width="96" height="96" style="margin:0 auto 6px"><h1>${signup ? 'حساب جديد' : 'دخول الإدارة'}</h1>
         <p class="muted small">${signup ? 'تسوّق وتتبّع طلباتك' : 'لصاحب المتجر والمشرف فقط'}</p></div>
       <form id="authForm" class="stack" novalidate>
         ${signup ? `<div><label class="lbl" for="fName">الاسم الكامل <span class="req">*</span></label><input class="input" id="fName" autocomplete="name" required></div>` : ''}

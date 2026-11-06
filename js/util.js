@@ -61,7 +61,7 @@ async function compressImage(file, max = 1280, quality = 0.82) {
 const blobToDataURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
 
 /* ================= ثوابت المتجر ================= */
-const BRAND = 'Johns Vintage Heaven';
+const BRAND = 'Johns Vinyl Heaven';
 const ROLE_NAMES = { admin: 'المشرف التقني', owner: 'صاحب المتجر', seller: 'بائع', customer: 'زبون', disabled: 'موقوف' };
 const SELLER_STATUS = { pending: 'بانتظار الموافقة', approved: 'معتمد', rejected: 'مرفوض', suspended: 'موقوف' };
 const KIND_NAMES = { record: 'أسطوانة', cd: 'CD', gramophone: 'غرامافون' };

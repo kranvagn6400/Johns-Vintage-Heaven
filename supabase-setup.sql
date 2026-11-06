@@ -1,5 +1,5 @@
 -- =====================================================================
--- Johns Vintage Heaven — إعداد قاعدة بيانات Supabase (المرحلة الأولى)
+-- Johns Vinyl Heaven — إعداد قاعدة بيانات Supabase (المرحلة الأولى)
 -- الأدوار (متجر واحد): admin = المشرف التقني، يدير كل شيء · owner = صاحب المتجر، يضيف ويعدّل ويحذف المنتجات فقط · customer = زبون
 -- شغّل هذا الملف مرة واحدة في مشروع Supabase الخاص بالمتجر:
 --   SQL Editor ← New query ← الصق المحتوى كاملاً ← Run
@@ -414,8 +414,8 @@ returns void language plpgsql security definer set search_path = public as $$
 begin
   if not can_edit_products() then raise exception 'ليست لديك صلاحية لهذه العملية'; end if;
   insert into sellers (id, shop_name, status, reviewed_by, reviewed_at)
-  values (auth.uid(), 'Johns Vintage Heaven', 'approved', auth.uid(), now())
-  on conflict (id) do update set status = 'approved';
+  values (auth.uid(), 'Johns Vinyl Heaven', 'approved', auth.uid(), now())
+  on conflict (id) do update set status = 'approved', shop_name = 'Johns Vinyl Heaven';
 end $$;
 grant execute on function public.ensure_staff_shop() to authenticated;
 
