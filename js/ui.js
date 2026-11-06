@@ -85,7 +85,7 @@ const UI = {
   disc(style, logo) {
     const C = 'cx="100" cy="100"';
     const rings = (op, col = '#fff', list = [76, 68, 60, 52, 46]) => list.map(r => `<circle ${C} r="${r}" fill="none" stroke="${col}" stroke-opacity="${op}" stroke-width="1.2"/>`).join('');
-    const shine = op => `<path d="M46.3 46.3 A76 76 0 0 1 100 24" stroke="#fff" stroke-opacity="${op}" stroke-width="8" fill="none" stroke-linecap="round"/>`;
+    const shine = () => '';   // بدون لمعة على أسطوانة الواجهة (طلب المصمم)
     const wedges = n => Array.from({ length: n }, (_, i) => {
       const a1 = i * 2 * Math.PI / n, a2 = (i + 1) * 2 * Math.PI / n, pt = a => `${(100 + 84 * Math.cos(a)).toFixed(1)} ${(100 + 84 * Math.sin(a)).toFixed(1)}`;
       return `<path d="M100 100 L${pt(a1)} A84 84 0 0 1 ${pt(a2)}Z" fill="${i % 2 ? 'var(--wine)' : 'var(--gold-2)'}"/>`; }).join('');
