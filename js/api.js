@@ -121,8 +121,14 @@ const SupaAPI = {
     const q = ['select=*,seller:sellers(shop_name)'];
     // المنتج الذي نفذت كميته يبقى ظاهراً بعلامة «نفذت الكمية» (onlyActive لعرض المتوفر فقط)
     q.push(f.onlyActive ? 'status=eq.active' : 'status=in.(active,sold)');
-    if (f.kind) q.push('kind=eq.' + f.kind);
-    for (const k of ['genre', 'condition', 'speed', 'size']) if (f[k]) q.push(`${k}=eq.${encodeURIComponent(f[k])}`);
+    // kind و genre قد يحملان أكثر من قيمة مفصولة بفاصلة. نوع الموسيقى لا يخص الغرامافون، فإن اختير معه يبقى ظاهراً
+    const kinds = csv(f.kind), genres = csv(f.genre);
+    if (kinds.length) q.push(`kind=in.(${kinds.join(',')})`);
+    if (genres.length) {
+      const list = genres.map(x => encodeURIComponent('"' + x.replace(/"/g, '') + '"')).join(',');
+      q.push(kinds.includes('gramophone') ? `or=(kind.eq.gramophone,genre.in.(${list}))` : `genre=in.(${list})`);
+    }
+    for (const k of ['condition', 'speed', 'size']) if (f[k]) q.push(`${k}=eq.${encodeURIComponent(f[k])}`);
     if (f.sellerId) q.push('seller_id=eq.' + f.sellerId);
     if (f.minPrice) q.push('price=gte.' + Number(f.minPrice));
     if (f.maxPrice) q.push('price=lte.' + Number(f.maxPrice));

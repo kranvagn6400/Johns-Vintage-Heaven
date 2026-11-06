@@ -60,7 +60,7 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   `GOVERNORATES` copied from Maidan), `Cart`.
 - ui.js: icons (`icon()`, `<i data-i>` + `UI.hydrate`), product card, placeholder art (SVG record/gramophone
   when no photo), order timeline.
-- api.js `SupaAPI` · demo.js `DemoAPI` · shop.js (home, list + filter sheet, product, cart, checkout, done, track,
+- api.js `SupaAPI` · demo.js `DemoAPI` · shop.js (home, list + filter sheet (checkboxes only: product kind + genre, multi-select as comma lists `kind=record,cd`/`genre=…`; genre never hides gramophones), product, cart, checkout, done, track,
   my orders) · seller.js · owner.js (tabs orders/sellers/fees/sales) · admin.js (users/settings/system) ·
   app.js (hash router `#/path?query`, nav, login/signup, حسابي, theme).
 - Never put personal data (phone, address) in URLs; tracking uses a form.

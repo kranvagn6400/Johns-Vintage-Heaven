@@ -88,9 +88,9 @@ const DemoAPI = {
   canSee(p) { return (['active', 'sold'].includes(p.status) && this.approved(p.seller_id)) || this.canEdit(); },
   async products(f = {}) {
     await this.tick();
-    const t = f.q && normAr(f.q), a = f.artist && normAr(f.artist);
+    const t = f.q && normAr(f.q), a = f.artist && normAr(f.artist), kinds = csv(f.kind), genres = csv(f.genre);
     let rows = this.db.products.filter(p => this.canSee(p) && (f.onlyActive ? p.status === 'active' : ['active', 'sold'].includes(p.status))
-      && (!f.kind || p.kind === f.kind) && (!f.genre || p.genre === f.genre) && (!f.condition || p.condition === f.condition)
+      && (!kinds.length || kinds.includes(p.kind)) && (!genres.length || genres.includes(p.genre) || (p.kind === 'gramophone' && kinds.includes('gramophone'))) && (!f.condition || p.condition === f.condition)
       && (!f.speed || p.speed == f.speed) && (!f.size || p.size == f.size) && (!f.sellerId || p.seller_id === f.sellerId)
       && (!f.minPrice || p.price >= Number(f.minPrice)) && (!f.maxPrice || p.price <= Number(f.maxPrice))
       && (!a || normAr(p.artist).includes(a))

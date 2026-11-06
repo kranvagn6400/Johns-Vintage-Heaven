@@ -14,6 +14,7 @@ const fmtDate = ts => { const d = new Date(ts); return `${d.getFullYear()}/${pad
 const fmtDay = ts => fmtDate(ts).slice(0, 10);
 const fmtNum = n => Number(n || 0).toLocaleString('en-US');
 const fmtIQD = n => `${fmtNum(n)} د.ع`;
+const csv = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);   // «a,b» ← ['a','b'] (تصفية متعددة)
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const store = {
   get(k, d) { try { const v = localStorage.getItem('jvh_' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },

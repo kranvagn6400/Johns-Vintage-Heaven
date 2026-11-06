@@ -36,7 +36,7 @@ const Shop = {
   /* ---------- المتجر: بحث وتصفية ---------- */
   filters() {
     const p = App.params, f = {};
-    for (const k of ['kind', 'q', 'artist', 'genre', 'speed', 'size', 'minPrice', 'maxPrice', 'sort']) if (p.get(k)) f[k] = p.get(k);
+    for (const k of ['kind', 'q', 'genre', 'sort']) if (p.get(k)) f[k] = p.get(k);
     return f;
   },
   setFilters(f) {
@@ -45,23 +45,21 @@ const Shop = {
   },
   async list(view) {
     const f = this.filters();
-    const title = f.kind ? KIND_PLURAL[f.kind] : 'كل المنتجات';
-    const chipNames = { artist: 'المطرب', genre: 'النوع', speed: 'السرعة', size: 'الحجم', minPrice: 'من', maxPrice: 'إلى' };
-    const chipVal = (k, v) => k === 'speed' ? v + ' لفة' : k === 'size' ? v + ' إنش' : /Price/.test(k) ? fmtIQD(v) : v;
-    const chips = Object.entries(f).filter(([k]) => chipNames[k]);
+    const kinds = csv(f.kind), genres = csv(f.genre);
+    const title = kinds.length === 1 ? KIND_PLURAL[kinds[0]] : 'كل المنتجات';
+    // شرائح التصفية: كل نوع منتج أو نوع موسيقى مختار له شريحة تُزال بلمسة
+    const chips = [...(kinds.length > 1 ? kinds.map(v => ['kind', v, KIND_PLURAL[v]]) : []), ...genres.map(v => ['genre', v, v])];
     view.innerHTML = `<div class="page-head"><h1>${title}</h1></div>
       <div class="tabs">${[['', 'الكل'], ['record', 'أسطوانات'], ['cd', 'أقراص CD'], ['gramophone', 'غرامافونات']].map(([k, l]) =>
         `<a class="tab ${(f.kind || '') === k ? 'on' : ''}" href="#" data-kind="${k}">${l}</a>`).join('')}</div>
-      <form class="shop-tools" id="sForm"><input class="input" id="sq" type="search" value="${esc(f.q || '')}" placeholder="بحث…" enterkeyhint="search">
+      <form class="shop-tools" id="sForm"><input class="input" id="sq" type="search" value="${esc(f.q || '')}" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
         <button class="btn btn-ghost" type="button" id="openFilters">${icon('filter')} تصفية</button></form>
-      ${chips.length ? `<div class="chips">${chips.map(([k, v]) => `<button class="chip" data-rm="${k}">${chipNames[k]}: ${esc(chipVal(k, v))} ${icon('x')}</button>`).join('')}</div>` : ''}
+      ${chips.length ? `<div class="chips">${chips.map(([k, v, l]) => `<button class="chip" data-rm="${k}" data-v="${esc(v)}">${esc(l)} ${icon('x')}</button>`).join('')}</div>` : ''}
       <div id="results">${UI.loading()}</div>`;
     if (App.params.get('focus')) $('#sq').focus();
-    $$('[data-kind]', view).forEach(a => a.onclick = e => { e.preventDefault(); const n = { ...f, kind: a.dataset.kind };
-      if (n.kind !== 'record') { delete n.speed; delete n.size; }
-      if (!isMusic(n.kind)) { delete n.artist; delete n.genre; }
-      this.setFilters(n); });
-    $$('[data-rm]', view).forEach(b => b.onclick = () => { const n = { ...f }; delete n[b.dataset.rm]; this.setFilters(n); });
+    $$('[data-kind]', view).forEach(a => a.onclick = e => { e.preventDefault(); this.setFilters({ ...f, kind: a.dataset.kind }); });
+    $$('[data-rm]', view).forEach(b => b.onclick = () => {
+      const k = b.dataset.rm; this.setFilters({ ...f, [k]: csv(f[k]).filter(v => v !== b.dataset.v).join(',') }); });
     $('#sForm').onsubmit = e => { e.preventDefault(); this.setFilters({ ...f, q: $('#sq').value.trim() }); };
     $('#openFilters').onclick = () => this.filterSheet(f);
     this.page = 0; this.loadPage(f, true);
@@ -77,26 +75,20 @@ const Shop = {
       if (r.more) $('#moreBtn').onclick = () => { this.page++; $('#more').innerHTML = UI.loading(); this.loadPage(f, false); };
     } catch (e) { box.innerHTML = UI.error(e); }
   },
+  // التصفية بمربعات اختيار فقط (بدون كتابة): نوع المنتج ونوع الموسيقى، ويمكن اختيار أكثر من واحد
   filterSheet(f) {
-    const rec = f.kind === 'record', music = isMusic(f.kind);
+    const kinds = csv(f.kind), genres = csv(f.genre);
+    const box = (name, v, label, on) => `<label class="check fbox"><input type="checkbox" name="${name}" value="${esc(v)}" ${on ? 'checked' : ''}> ${esc(label)}</label>`;
     openSheet(`<h2>تصفية النتائج</h2><form id="fForm" class="stack">
-      ${!f.kind ? '<p class="notice">' + icon('info') + '<span>اختر نوع المنتج من الأعلى لتظهر خيارات أكثر (المطرب، النوع الموسيقي، السرعة…).</span></p>' : ''}
-      ${music ? `<div><label class="lbl" for="fArtist">المطرب</label><input class="input" id="fArtist" value="${esc(f.artist || '')}" placeholder="مثال: فيروز"></div>
-        <div><label class="lbl" for="fGenre">النوع الموسيقي</label><select class="input" id="fGenre"><option value="">الكل</option>${UI.options(GENRES, f.genre)}</select></div>` : ''}
-      ${rec ? `<div class="grid2"><div><label class="lbl" for="fSpeed">السرعة</label><select class="input" id="fSpeed"><option value="">الكل</option>${UI.options(SPEEDS, f.speed, { 33: '33 لفة', 45: '45 لفة', 78: '78 لفة' })}</select></div>
-        <div><label class="lbl" for="fSize">الحجم</label><select class="input" id="fSize"><option value="">الكل</option>${UI.options(SIZES, f.size, { 7: '7 إنش', 10: '10 إنش', 12: '12 إنش' })}</select></div></div>` : ''}
-      <div class="grid2"><div><label class="lbl" for="fMin">السعر من (د.ع)</label><input class="input num" id="fMin" inputmode="numeric" value="${esc(f.minPrice || '')}"></div>
-        <div><label class="lbl" for="fMax">إلى (د.ع)</label><input class="input num" id="fMax" inputmode="numeric" value="${esc(f.maxPrice || '')}"></div></div>
-      <div><label class="lbl" for="fSort">الترتيب</label><select class="input" id="fSort">${UI.options(['', 'price_asc', 'price_desc'], f.sort, { '': 'الأحدث أولاً', price_asc: 'السعر: من الأقل', price_desc: 'السعر: من الأعلى' })}</select></div>
+      <fieldset class="fgroup"><legend class="lbl">نوع المنتج</legend><div class="fboxes">
+        ${['record', 'cd', 'gramophone'].map(k => box('kind', k, KIND_PLURAL[k], kinds.includes(k))).join('')}</div></fieldset>
+      <fieldset class="fgroup"><legend class="lbl">نوع الموسيقى</legend><div class="fboxes">
+        ${GENRES.map(g => box('genre', g, g, genres.includes(g))).join('')}</div></fieldset>
       <div class="row-btns"><button class="btn btn-primary" type="submit">عرض النتائج</button><button class="btn btn-ghost" type="button" id="fClear">مسح الكل</button></div>
     </form>`);
-    const val = id => { const el = $('#' + id); return el ? toLatinDigits(el.value).trim() : ''; };
-    $('#fForm').onsubmit = e => {
-      e.preventDefault();
-      this.setFilters({ kind: f.kind, q: f.q, artist: val('fArtist'), genre: val('fGenre'), speed: val('fSpeed'), size: val('fSize'),
-        minPrice: val('fMin').replace(/\D/g, ''), maxPrice: val('fMax').replace(/\D/g, ''), sort: val('fSort') });
-    };
-    $('#fClear').onclick = () => this.setFilters({ kind: f.kind });
+    const picked = name => $$(`#fForm input[name="${name}"]:checked`).map(x => x.value).join(',');
+    $('#fForm').onsubmit = e => { e.preventDefault(); this.setFilters({ ...f, kind: picked('kind'), genre: picked('genre') }); };
+    $('#fClear').onclick = () => this.setFilters({ q: f.q });
   },
 
   /* ---------- صفحة المنتج ---------- */

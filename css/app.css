@@ -133,6 +133,11 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .stack{display:flex;flex-direction:column;gap:14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
 .check{display:flex;align-items:center;gap:10px;font-size:14.5px;cursor:pointer}
+.fgroup{border:0;padding:0;margin:0}.fgroup legend{margin-bottom:8px}
+.fboxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
+.fbox{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.fbox:has(input:checked){border-color:var(--wine);background:var(--gold-soft)}
+.fbox input{accent-color:var(--wine);width:18px;height:18px}
 .check input{width:20px;height:20px;accent-color:var(--wine)}
 .seg{display:flex;background:var(--paper-2);border-radius:var(--r);padding:4px;gap:4px}
 .seg label{flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
