@@ -43,7 +43,7 @@ const App = {
     this.nav();
     const r = {
       '': () => Shop.home(view), shop: () => Shop.list(view), p: () => Shop.product(view, seg[1]),
-      cart: () => Shop.cart(view), checkout: () => Shop.checkout(view), done: () => Shop.done(view, seg[1]),
+      cart: () => this.buyer() ? Shop.cart(view) : this.go('#/'), checkout: () => this.buyer() ? Shop.checkout(view) : this.go('#/'), done: () => Shop.done(view, seg[1]),
       track: () => Shop.track(view), orders: () => this.go('#/track'),   // لا حسابات للزبائن: التتبع برمز الطلب
       login: () => this.auth(view, 'login'), signup: () => this.auth(view, 'signup'), account: () => this.account(view),
       seller: () => this.need(['owner', 'admin']) && Seller.route(view, seg.slice(1)),
@@ -59,6 +59,8 @@ const App = {
     if (!roles.includes(me.role)) { $('#app').innerHTML = UI.empty('shield', 'هذه الصفحة ليست لحسابك', 'سجّل الدخول بحساب له الصلاحية المناسبة.', '<a class="btn btn-ghost" href="#/account">حسابي</a>'); return false; }
     return true;
   },
+  // صاحب المتجر لا يشتري: لا سلة ولا زر «أضف إلى السلة» ولا إتمام طلب
+  buyer() { return !(API.me && API.me.role === 'owner'); },
   dashLink() {
     const r = API.me && API.me.role;
     return r === 'owner' ? ['#/owner', 'الطلبات', 'receipt'] : r === 'admin' ? ['#/admin', 'لوحة المشرف', 'shield'] : null;
@@ -70,6 +72,7 @@ const App = {
     // زر «حسابي» للإدارة فقط (صاحب المتجر والمشرف)؛ الزبون يتسوّق بدون حساب
     const staff = !!(API.me && ['owner', 'admin'].includes(API.me.role));
     $('#tbAccount').classList.toggle('hidden', !staff);
+    $('#tbCart').classList.toggle('hidden', !this.buyer());
     $('#tbNav').innerHTML = [
       ['#/', 'الرئيسية', p === '/'], ['#/shop?kind=record', 'الأسطوانات', p === '/shop' && kind === 'record'],
       ['#/shop?kind=cd', 'أقراص CD', p === '/shop' && kind === 'cd'],
@@ -80,7 +83,7 @@ const App = {
     ].map(([h, t, o]) => `<a href="${h}" class="${on(o)}">${t}</a>`).join('');
     $('#bottomnav').innerHTML = [
       ['#/', 'الرئيسية', 'home', p === '/'], ['#/shop', 'المتجر', 'disc', p === '/shop' || p === '/p'],
-      ['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout'],
+      ...(this.buyer() ? [['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout']] : []),
       ...(dash ? [[dash[0], 'لوحتي', dash[2], p === dash[0].slice(1)]] : []),
       staff ? ['#/account', 'حسابي', 'user', ['/account', '/login', '/signup'].includes(p)] : ['#/track', 'تتبّع طلب', 'truck', p === '/track']
     ].map(([h, t, ic, o]) => `<a href="${h}" class="${on(o)}">${icon(ic)}<span>${t}</span>${ic === 'cart' ? '<span class="badge hidden" data-cart></span>' : ''}</a>`).join('');

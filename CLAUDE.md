@@ -20,7 +20,7 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
   becomes admin (trigger). Last admin can't be removed.
 - `owner` «صاحب المتجر» = the friend: adds/edits/deletes products and their photos («المنتجات» #/seller) AND sees orders
   and changes their status (#/owner shows only the «الطلبات» tab for owner; SQL `can_manage_orders()` = owner|admin, demo
-  `canEdit()`). No delivery fees, sales, settings or accounts. Created by admin. Lands on #/owner (orders) after login.
+  `canEdit()`). No delivery fees, sales, settings or accounts. Created by admin. Lands on #/owner (orders) after login. Owner never buys: no cart button/tab, no «أضف إلى السلة» (product page shows «تعديل المنتج» instead), #/cart and #/checkout redirect home (`App.buyer()`).
 - No sellers: signup creates customers only; seller signup, seller dashboard tabs and the «البائعون» review list are gone.
   The `seller` role value and `sellers` table remain only as the products' shop (`products.seller_id`): owner/admin get an
   approved shop named Johns Vinyl Heaven via `API.ensureShop()` → RPC `ensure_staff_shop`. Owner and admin see and edit

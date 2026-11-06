@@ -110,7 +110,8 @@ const Shop = {
           <h1>${esc(p.title)}</h1>
           <p class="muted">${UI.meta(p)}</p>
           <div class="pd-price">${fmtIQD(p.price)}</div>
-          ${sold ? '<div class="notice bad">' + icon('info') + '<span>نفذت الكمية.</span></div>' : `
+          ${!App.buyer() ? `<a class="btn btn-ghost" href="#/seller/edit/${esc(p.id)}">${icon('edit')} تعديل المنتج</a>${sold ? '<div class="notice bad" style="margin-top:10px">' + icon('info') + '<span>نفذت الكمية.</span></div>' : ''}`
+            : sold ? '<div class="notice bad">' + icon('info') + '<span>نفذت الكمية.</span></div>' : `
             <div class="row-btns" style="align-items:center">
               ${p.stock > 1 ? `<div class="qty"><button type="button" data-q="1" aria-label="زيادة">${icon('plus')}</button><span id="pq">1</span><button type="button" data-q="-1" aria-label="إنقاص">${icon('minus')}</button></div>` : ''}
               <button class="btn btn-primary" id="addCart" style="flex:1">${icon('cart')} أضف إلى السلة</button></div>`}
