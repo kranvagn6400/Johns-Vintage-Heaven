@@ -10,22 +10,20 @@ const Shop = {
       </section>
       <form class="searchbar" id="homeSearch"><input class="input" id="hq" type="search" placeholder="ابحث عن فنان أو أغنية…" enterkeyhint="search">
         <button class="btn btn-primary" type="submit" aria-label="بحث">${icon('search')}</button></form>
-      <div class="section"><h2>وصل حديثاً</h2><a href="#/shop">عرض الكل</a></div>
-      <div id="latest">${UI.loading()}</div>
-      <div id="kinds"></div>
+      <div id="kinds">${UI.loading()}</div>
       <div class="dash-grid" style="margin-top:26px">
         <div class="card"><h3>${icon('truck')} توصيل لكل العراق</h3><p class="muted small">التوصيل لكل المحافظات عبر شركة توصيل معتمدة، والدفع نقداً عند الاستلام.</p></div>
       </div>
       ${this.footer()}`;
     $('#homeSearch').onsubmit = e => { e.preventDefault(); App.go('#/shop?q=' + encodeURIComponent($('#hq').value.trim())); };
     try {
-      // «وصل حديثاً» العام، ثم «وصل حديثاً» لكل قسم (القسم الفارغ لا يظهر)
+      // «وصل حديثاً» لكل قسم (القسم الفارغ لا يظهر)
       const kinds = ['record', 'cd', 'gramophone'];
-      const [a, ...per] = await Promise.all([API.products({ limit: 8 }), ...kinds.map(kind => API.products({ kind, limit: 4 }))]);
-      $('#latest').innerHTML = a.rows.length ? `<div class="grid">${a.rows.map(p => UI.card(p)).join('')}</div>` : UI.empty('disc', 'لا توجد منتجات بعد', 'ستظهر هنا المنتجات فور إضافتها.');
+      const per = await Promise.all(kinds.map(kind => API.products({ kind, limit: 4 })));
       $('#kinds').innerHTML = kinds.map((k, i) => per[i].rows.length ? `<div class="section"><h2>${KIND_PLURAL[k]} — وصل حديثاً</h2><a href="#/shop?kind=${k}">عرض الكل</a></div>
-        <div class="grid">${per[i].rows.map(p => UI.card(p)).join('')}</div>` : '').join('');
-    } catch (e) { $('#latest').innerHTML = UI.error(e); }
+        <div class="grid">${per[i].rows.map(p => UI.card(p)).join('')}</div>` : '').join('')
+        || UI.empty('disc', 'لا توجد منتجات بعد', 'ستظهر هنا المنتجات فور إضافتها.');
+    } catch (e) { $('#kinds').innerHTML = UI.error(e); }
   },
   footer() {
     const s = App.settings;
