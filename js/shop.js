@@ -12,7 +12,7 @@ const Shop = {
         <button class="btn btn-primary" type="submit" aria-label="بحث">${icon('search')}</button></form>
       <div id="kinds">${UI.loading()}</div>
       <div class="dash-grid" style="margin-top:26px">
-        <div class="card"><h3>${icon('truck')} توصيل لكل العراق</h3><p class="muted small">التوصيل لكل المحافظات عبر شركة توصيل معتمدة، والدفع نقداً عند الاستلام.</p></div>
+        <div class="card"><h3>${icon('truck')} توصيل لكل العراق</h3><p class="muted small">التوصيل لكل المحافظات عبر شركة توصيل معتمدة، والدفع نقداً عند الاستلام او عن طريق الدفع الالكتروني.</p></div>
       </div>
       ${this.footer()}`;
     $('#homeSearch').onsubmit = e => { e.preventDefault(); App.go('#/shop?q=' + encodeURIComponent($('#hq').value.trim())); };
@@ -237,7 +237,7 @@ const Shop = {
     view.innerHTML = `<div class="card success" style="max-width:520px;margin:10px auto">
       <div class="seal">${icon('check')}</div><h1 style="font-size:22px">شكراً لك! وصل طلبك</h1>
       <p class="muted">رمز طلبك:</p><div class="code-box">${esc(code)}</div>
-      <p class="muted small">احتفظ بهذا الرمز لتتبّع طلبك. سيتصل بك فريق المتجر لتأكيد الطلب، والدفع نقداً عند الاستلام.</p>
+      <p class="muted small">احتفظ بهذا الرمز لتتبّع طلبك. سيتصل بك فريق المتجر لتأكيد الطلب، والدفع نقداً عند الاستلام او عن طريق الدفع الالكتروني.</p>
       <div class="row-btns" style="margin-top:18px"><a class="btn btn-primary" href="#/track">تتبّع الطلب</a><a class="btn btn-ghost" href="#/shop">متابعة التسوّق</a></div></div>`;
   },
 
