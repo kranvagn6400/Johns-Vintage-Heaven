@@ -345,3 +345,12 @@ legend{padding:0 8px;font-weight:700;color:var(--gold);font-size:14px}
 .bar span{display:block;height:100%;background:var(--gold)}
 @media (max-width:600px){.row>.status-btns{flex-basis:100%;justify-content:flex-start;padding-inline-start:70px}}
 
+
+/* مفتاح تشغيل/إيقاف */
+.switch-row{display:flex;align-items:center;gap:12px;cursor:pointer}.switch-row>span{flex:1}
+.switch-row input{position:absolute;opacity:0;pointer-events:none}
+.switch{width:46px;height:26px;border-radius:99px;background:var(--faint);position:relative;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0004;transition:inset-inline-start .2s}
+.switch-row input:checked+.switch{background:var(--wine)}
+.switch-row input:checked+.switch::after{inset-inline-start:23px}
+.switch-row input:focus-visible+.switch{outline:2px solid var(--gold);outline-offset:2px}

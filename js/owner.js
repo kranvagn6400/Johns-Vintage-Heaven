@@ -7,7 +7,7 @@ const Owner = {
     const tab = owner ? 'orders' : App.params.get('tab') || 'orders';
     const head = `<div class="page-head"><h1>${owner ? 'الطلبات' : 'إدارة المتجر'}</h1></div>
       <div class="tabs">${[['orders', 'الطلبات', 'receipt'], ...(owner ? [] : [['fees', 'رسوم التوصيل', 'truck'], ['sales', 'المبيعات', 'chart']])]
-        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}<a class="tab" href="#/seller">${icon('disc')} المنتجات</a></div><div id="ownerBody">${UI.loading()}</div>`;
+        .map(([k, l, ic]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#/owner?tab=${k}">${icon(ic)} ${l}<span class="n hidden" data-n="${k}"></span></a>`).join('')}<a class="tab" href="#/track">${icon('truck')} تتبّع طلب برمزه</a></div><div id="ownerBody">${UI.loading()}</div>`;
     view.innerHTML = head;
     const body = $('#ownerBody');
     ({ orders: () => this.ordersTab(body), fees: () => this.feesTab(body), sales: () => this.salesTab(body) }[tab] || (() => this.ordersTab(body)))();

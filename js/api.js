@@ -82,7 +82,11 @@ const SupaAPI = {
     try { if (this.session) await this.req('/auth/v1/logout', { method: 'POST' }); } catch {}
     this.setSession(null); this.setMe(null);
   },
-  changePassword(password) { return this.req('/auth/v1/user', { method: 'PUT', body: { password } }); },
+  async changePassword(oldPassword, password) {
+    try { await this.req('/auth/v1/token?grant_type=password', { method: 'POST', auth: false, body: { email: this.emailOf(this.me.phone), password: oldPassword } }); }
+    catch (e) { throw new Error(e.status ? 'كلمة المرور القديمة غير صحيحة' : e.message); }
+    return this.req('/auth/v1/user', { method: 'PUT', body: { password } });
+  },
   async updateMe({ full_name, shop_name, bio }) {
     const id = this.me.id;
     if (full_name !== undefined) await this.patch('profiles', `id=eq.${id}`, { full_name });

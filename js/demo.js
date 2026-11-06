@@ -62,7 +62,8 @@ const DemoAPI = {
   },
   async signUp(d) { await this.tick(); return this.loginAs(this.addUser(d)); },
   async signOut() { this.session = null; this.me = null; store.del('demo_session'); },
-  async changePassword(pw) {
+  async changePassword(old, pw) {
+    if (this.prof(this.uidNow()).password !== old) throw new Error('كلمة المرور القديمة غير صحيحة');
     if (String(pw).length < 6) throw new Error('كلمة المرور قصيرة جداً (6 أحرف على الأقل)');
     this.prof(this.uidNow()).password = pw; this.save();
   },

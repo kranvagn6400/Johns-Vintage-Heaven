@@ -87,7 +87,7 @@ const App = {
       ...(this.buyer() ? [['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout']]
         : [['#/owner', 'الطلبات', 'receipt', p === '/owner'], ['#/seller', 'المنتجات', 'package', p === '/seller']]),
       ...(dash && this.buyer() ? [[dash[0], 'لوحتي', dash[2], p === dash[0].slice(1)]] : []),
-      staff ? ['#/account', 'حسابي', 'user', ['/account', '/login', '/signup'].includes(p)] : ['#/track', 'تتبّع طلب', 'truck', p === '/track']
+      ...(staff ? [] : [['#/track', 'تتبّع طلب', 'truck', p === '/track']])
     ].map(([h, t, ic, o]) => `<a href="${h}" class="${on(o)}">${icon(ic)}<span>${t}</span>${ic === 'cart' ? '<span class="badge hidden" data-cart></span>' : ''}</a>`).join('');
     this.badges();
   },
@@ -158,19 +158,10 @@ const App = {
         <div class="grow"><h3 style="margin:0">${esc(me.full_name || '—')}</h3><div class="muted small num">${esc(me.phone)}</div>
           <span class="pill">${ROLE_NAMES[me.role] || me.role}</span>
           ${seller && me.role === 'seller' ? ` <span class="pill st-${seller.status}">${SELLER_STATUS[seller.status]}</span>` : ''}</div></div></div>
-      <div class="card"><div class="list">
-        ${dash ? `<a class="row row-click" href="${dash[0]}">${icon(dash[2])}<span class="grow"><b>${dash[1]}</b></span>${icon('next')}</a>` : ''}
-        ${me.role === 'admin' ? `<a class="row row-click" href="#/owner">${icon('chart')}<span class="grow"><b>إدارة المتجر</b><div class="sub">الطلبات، رسوم التوصيل، المبيعات</div></span>${icon('next')}</a>` : ''}
-        <a class="row row-click" href="#/track">${icon('truck')}<span class="grow"><b>تتبّع طلب برمزه</b></span>${icon('next')}</a>
-        ${['owner', 'admin'].includes(me.role) ? `<a class="row row-click" href="#/seller">${icon('disc')}<span class="grow"><b>المنتجات</b><div class="sub">أضف وعدّل منتجات المتجر وصورها</div></span>${icon('next')}</a>` : ''}
-      </div></div></div><div>
-      <div class="card"><h3>بياناتي</h3><form id="meForm" class="stack">
-        <div><label class="lbl" for="mName">الاسم</label><input class="input" id="mName" value="${esc(me.full_name)}"></div>
-        ${seller ? `<div><label class="lbl" for="mShop">اسم المتجر</label><input class="input" id="mShop" value="${esc(seller.shop_name)}"></div>
-          <div><label class="lbl" for="mBio">نبذة عن متجرك</label><textarea class="input" id="mBio" placeholder="تظهر للزبائن في صفحات منتجاتك">${esc(seller.bio)}</textarea></div>` : ''}
-        <button class="btn btn-ghost" type="submit">حفظ</button></form></div>
       <div class="card"><h3>كلمة المرور</h3><form id="pwForm" class="stack">
-        <input class="input" id="pw1" type="password" dir="ltr" autocomplete="new-password" placeholder="كلمة مرور جديدة (6 على الأقل)">
+        <input class="input" id="pw0" type="password" dir="ltr" autocomplete="current-password" placeholder="كلمة المرور القديمة" required>
+        <input class="input" id="pw1" type="password" dir="ltr" autocomplete="new-password" placeholder="كلمة المرور الجديدة (6 على الأقل)" required>
+        <input class="input" id="pw2" type="password" dir="ltr" autocomplete="new-password" placeholder="تأكيد كلمة المرور الجديدة" required>
         <button class="btn btn-ghost" type="submit">تغيير كلمة المرور</button></form></div>
       ${this.themeCard()}
       ${['owner', 'admin'].includes(me.role) ? this.storeThemeCard() : ''}
@@ -180,25 +171,26 @@ const App = {
       </div></div></div></div>`;
     this.bindTheme(view);
     this.bindStoreTheme(view);
-    $('#meForm').onsubmit = async e => {
-      e.preventDefault(); busy(true);
-      try { await API.updateMe({ full_name: $('#mName').value.trim(), ...(seller ? { shop_name: $('#mShop').value.trim(), bio: $('#mBio').value.trim() } : {}) }); toast('تم الحفظ'); }
-      catch (err) { toast(err.message); } finally { busy(false); }
-    };
     $('#pwForm').onsubmit = async e => {
-      e.preventDefault(); const pw = $('#pw1').value;
-      if (pw.length < 6) return toast('كلمة المرور 6 أحرف على الأقل');
-      busy(true); try { await API.changePassword(pw); $('#pw1').value = ''; toast('تم تغيير كلمة المرور'); } catch (err) { toast(err.message); } finally { busy(false); }
+      e.preventDefault(); const old = $('#pw0').value, pw = $('#pw1').value;
+      if (!old) return toast('اكتب كلمة المرور القديمة');
+      if (pw.length < 6) return toast('كلمة المرور الجديدة 6 أحرف على الأقل');
+      if (pw !== $('#pw2').value) return toast('تأكيد كلمة المرور غير مطابق');
+      busy(true); try { await API.changePassword(old, pw); ['#pw0', '#pw1', '#pw2'].forEach(q => $(q).value = ''); toast('تم تغيير كلمة المرور'); } catch (err) { toast(err.message); } finally { busy(false); }
     };
     $('#logout').onclick = async () => { await API.signOut(); toast('تم تسجيل الخروج'); this.go('#/'); };
     const rd = $('#resetDemo'); if (rd) rd.onclick = async () => { if (await confirmBox('حذف كل التغييرات التجريبية والعودة للبيانات الأولى؟', 'إعادة الضبط', true)) { DemoAPI.reset(); Cart.clear(); this.go('#/'); } };
     const bs = $('[data-become-seller]', view);
     if (bs) bs.onclick = e => { e.preventDefault(); openSheet(`<h2>البيع في المتجر</h2><p>لعرض منتجاتك تحتاج حساب بائع. تواصل مع صاحب المتجر${this.settings.contact_phone ? ` على الرقم <b class="num">${esc(this.settings.contact_phone)}</b>` : ''} ليحوّل حسابك إلى بائع، أو أنشئ حساب بائع جديد برقم آخر.</p>`); };
   },
-  themeCard() {
+  // الوضع الداكن: مفتاح يخص هذا المستخدم وهذا الجهاز فقط (لا يتغيّر عند الآخرين)
+  isDark() {
     const t = store.get('theme', 'auto');
-    return `<div class="card"><h3>المظهر</h3><div class="seg" id="themeSeg">
-      ${[['auto', 'تلقائي'], ['light', 'فاتح'], ['dark', 'داكن']].map(([v, l]) => `<label><input type="radio" name="theme" value="${v}" ${t === v ? 'checked' : ''}>${l}</label>`).join('')}</div></div>`;
+    return t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+  },
+  themeCard() {
+    return `<div class="card"><label class="switch-row"><span><b>Dark Mode</b><span class="muted small" style="display:block">المظهر الداكن لك أنت فقط</span></span>
+      <input type="checkbox" id="darkSw" ${this.isDark() ? 'checked' : ''}><i class="switch"></i></label></div>`;
   },
   // شعار وألوان المتجر: يختارها صاحب المتجر أو المشرف وتظهر لكل الزبائن
   storeThemeCard() {
@@ -218,10 +210,10 @@ const App = {
     });
   },
   bindTheme(view) {
-    $$('input[name=theme]', view).forEach(r => r.onchange = () => {
-      store.set('theme', r.value);
-      if (r.value === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = r.value;
-    });
+    $('#darkSw', view).onchange = e => {
+      const v = e.target.checked ? 'dark' : 'light';
+      store.set('theme', v); document.documentElement.dataset.theme = v;
+    };
   }
 };
 
