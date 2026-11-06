@@ -83,8 +83,10 @@ const App = {
     ].map(([h, t, o]) => `<a href="${h}" class="${on(o)}">${t}</a>`).join('');
     $('#bottomnav').innerHTML = [
       ['#/', 'الرئيسية', 'home', p === '/'], ['#/shop', 'المتجر', 'disc', p === '/shop' || p === '/p'],
-      ...(this.buyer() ? [['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout']] : []),
-      ...(dash ? [[dash[0], 'لوحتي', dash[2], p === dash[0].slice(1)]] : []),
+      // صاحب المتجر: «الطلبات» مكان السلة، و«المنتجات» مكان «لوحتي»
+      ...(this.buyer() ? [['#/cart', 'السلة', 'cart', p === '/cart' || p === '/checkout']]
+        : [['#/owner', 'الطلبات', 'receipt', p === '/owner'], ['#/seller', 'المنتجات', 'package', p === '/seller']]),
+      ...(dash && this.buyer() ? [[dash[0], 'لوحتي', dash[2], p === dash[0].slice(1)]] : []),
       staff ? ['#/account', 'حسابي', 'user', ['/account', '/login', '/signup'].includes(p)] : ['#/track', 'تتبّع طلب', 'truck', p === '/track']
     ].map(([h, t, ic, o]) => `<a href="${h}" class="${on(o)}">${icon(ic)}<span>${t}</span>${ic === 'cart' ? '<span class="badge hidden" data-cart></span>' : ''}</a>`).join('');
     this.badges();
