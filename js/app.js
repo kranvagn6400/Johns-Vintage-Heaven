@@ -25,6 +25,7 @@ const App = {
     try {
       this.settings = await API.settings();
       Themes.apply(this.settings.store_theme);   // شعار وألوان المتجر كما اختارها صاحب المتجر أو المشرف
+      Themes.setRecord(this.settings.record_style);   // شكل أسطوانة الواجهة
       const a = $('#announce'); a.textContent = this.settings.announcement || ''; a.classList.toggle('hidden', !this.settings.announcement);
     } catch (e) { console.warn(e); }
   },
@@ -171,6 +172,7 @@ const App = {
       </div></div></div></div>`;
     this.bindTheme(view);
     this.bindStoreTheme(view);
+    this.bindRecord(view);
     $('#pwForm').onsubmit = async e => {
       e.preventDefault(); const old = $('#pw0').value, pw = $('#pw1').value;
       if (!old) return toast('اكتب كلمة المرور القديمة');
@@ -198,7 +200,10 @@ const App = {
     return `<div class="card"><h3>شعار وألوان المتجر</h3><p class="muted small">يتغيّر الشعار وألوان الموقع لكل الزبائن فور الاختيار.</p>
       <div class="store-themes">${Object.entries(Themes.list).map(([id, t]) => `<button type="button" class="st-opt ${id === cur ? 'on' : ''}" data-store-theme="${id}">
         <img src="${t.logo}" alt=""><b>${esc(t.name)}</b><span class="muted small">${esc(t.note)}</span>
-        <span class="sw">${t.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div></div>`;
+        <span class="sw">${t.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div></div>
+      <div class="card"><h3>شكل الأسطوانة المتحركة</h3><p class="muted small">الأسطوانة التي تدور في واجهة الصفحة الرئيسية، والشعار ملصقها. ألوانها تتبع ثيم المتجر.</p>
+      <div class="store-themes discs">${Object.entries(UI.DISCS).map(([id, name]) => `<button type="button" class="st-opt ${id === Themes.record() ? 'on' : ''}" data-record="${id}">
+        <span class="disc-prev">${UI.disc(id, Themes.list[cur].logo)}</span><b>${esc(name)}</b></button>`).join('')}</div></div>`;
   },
   bindStoreTheme(view) {
     $$('[data-store-theme]', view).forEach(b => b.onclick = async () => {
@@ -207,6 +212,15 @@ const App = {
       Themes.apply(id); $$('[data-store-theme]', view).forEach(x => x.classList.toggle('on', x === b));
       try { await API.saveStoreTheme(id); this.settings.store_theme = id; toast('تم تغيير شعار وألوان المتجر'); }
       catch (e) { Themes.apply(prev); $$('[data-store-theme]', view).forEach(x => x.classList.toggle('on', x.dataset.storeTheme === prev)); toast(e.message); }
+    });
+  },
+  bindRecord(view) {
+    $$('[data-record]', view).forEach(b => b.onclick = async () => {
+      const id = b.dataset.record, prev = Themes.record();
+      if (id === prev) return;
+      Themes.setRecord(id); $$('[data-record]', view).forEach(x => x.classList.toggle('on', x === b));
+      try { await API.saveRecordStyle(id); this.settings.record_style = id; toast('تم تغيير شكل الأسطوانة'); }
+      catch (e) { Themes.setRecord(prev); $$('[data-record]', view).forEach(x => x.classList.toggle('on', x.dataset.record === prev)); toast(e.message); }
     });
   },
   bindTheme(view) {

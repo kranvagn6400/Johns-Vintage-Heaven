@@ -12,6 +12,15 @@ const Themes = {
     jukebox: { name: 'جوك بوكس', note: 'أحمر وأسود وأصفر', logo: 'logos/jukebox.png', bar: '#141414', sw: ['#141414', '#c8102e', '#e8c547', '#f5f1ea'] }
   },
   def: 'classic',
+  // شكل أسطوانة الواجهة (UI.DISCS)، محفوظ مثل الثيم: آخر قيمة في المتصفح ثم settings.record_style
+  record() { try { const v = JSON.parse(localStorage.getItem('jvh_record_style')); return v || 'classic'; } catch { return 'classic'; } },
+  setRecord(id) {
+    const ui = typeof UI !== 'undefined';   // UI معرّف بـ const فلا يظهر في window
+    if (!id || (ui && !UI.DISCS[id])) id = 'classic';
+    try { localStorage.setItem('jvh_record_style', JSON.stringify(id)); } catch {}
+    const h = document.getElementById('heroDisc'); if (h && ui) h.innerHTML = UI.disc(id, this.list[this.current()].logo);
+    return id;
+  },
   current() { try { const v = JSON.parse(localStorage.getItem('jvh_store_theme')); return this.list[v] ? v : this.def; } catch { return this.def; } },
   // يغيّر الألوان (data-store على <html>) والشعار وأيقونة التبويب ولون شريط المتصفح
   apply(id) {

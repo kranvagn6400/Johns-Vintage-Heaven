@@ -108,6 +108,7 @@ const SupaAPI = {
   async settings() { const r = await this.get('settings', 'select=*'); return Object.fromEntries(r.map(x => [x.key, x.value])); },
   // ثيم المتجر: صاحب المتجر والمشرف (سياسة settings_theme_write في SQL)
   saveStoreTheme(id) { return this.saveSettings({ store_theme: id }); },
+  saveRecordStyle(id) { return this.saveSettings({ record_style: id }); },
   saveSettings(obj) {
     return this.req('/rest/v1/settings', { method: 'POST', body: Object.entries(obj).map(([key, value]) => ({ key, value: String(value) })),
       headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });

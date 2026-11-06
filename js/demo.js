@@ -78,6 +78,7 @@ const DemoAPI = {
   async settings() { return { ...this.db.settings }; },
   async saveSettings(obj) { if (!this.isAdmin()) this.deny(); Object.assign(this.db.settings, obj); this.save(); },
   async saveStoreTheme(id) { await this.tick(); if (!this.canEdit()) this.deny(); this.db.settings.store_theme = id; this.save(); },
+  async saveRecordStyle(id) { await this.tick(); if (!this.canEdit()) this.deny(); this.db.settings.record_style = id; this.save(); },
   async fees() { return this.clone(this.db.fees); },
   async saveFees(rows) {
     if (!this.isStaff()) this.deny();

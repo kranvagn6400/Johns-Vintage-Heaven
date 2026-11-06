@@ -292,10 +292,10 @@ drop policy if exists settings_select on public.settings;
 create policy settings_select on public.settings for select to anon, authenticated using (true);
 drop policy if exists settings_write on public.settings;
 create policy settings_write on public.settings for all to authenticated using (is_admin()) with check (is_admin());
--- صاحب المتجر يغيّر «شعار وألوان المتجر» فقط (المفتاح store_theme)، والمشرف كل الإعدادات
+-- صاحب المتجر يغيّر «شعار وألوان المتجر» و«شكل الأسطوانة» فقط (store_theme و record_style)، والمشرف كل الإعدادات
 drop policy if exists settings_theme_write on public.settings;
 create policy settings_theme_write on public.settings for all to authenticated
-  using (key = 'store_theme' and can_edit_products()) with check (key = 'store_theme' and can_edit_products());
+  using (key in ('store_theme', 'record_style') and can_edit_products()) with check (key in ('store_theme', 'record_style') and can_edit_products());
 
 -- الطلبات تُنشأ وتُعدّل فقط عبر الدوال أدناه (place_order / set_order_status)
 drop policy if exists orders_select on public.orders;

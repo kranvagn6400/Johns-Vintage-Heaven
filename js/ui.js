@@ -76,6 +76,36 @@ const UI = {
         : `<circle cx="100" cy="100" r="30" fill="${c}"/><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>`}
       <circle cx="100" cy="100" r="${p.logo ? 2.5 : 3.5}" fill="#f3e8d2"/></svg>`;
   },
+  // أسطوانة الواجهة: 10 أشكال يختار منها صاحب المتجر أو المشرف (settings.record_style)، والشعار ملصقها.
+  // الألوان من ثيم المتجر (--wine و--gold-2 و--paper)، فتتغيّر مع الثيم. الذهبية والكلاسيكية ثابتتان.
+  DISCS: {
+    classic: 'كلاسيكية سوداء', color: 'ملوّنة شفافة', splatter: 'مرشوشة', gold: 'ذهبية', split: 'نصفين بلونين',
+    sunburst: 'أشعة الشمس', swirl: 'رخامية', clear: 'شفافة', shellac: 'حافة نحاسية', bands: 'حلقات ملوّنة'
+  },
+  disc(style, logo) {
+    const C = 'cx="100" cy="100"';
+    const rings = (op, col = '#fff', list = [76, 68, 60, 52, 46]) => list.map(r => `<circle ${C} r="${r}" fill="none" stroke="${col}" stroke-opacity="${op}" stroke-width="1.2"/>`).join('');
+    const shine = op => `<path d="M46.3 46.3 A76 76 0 0 1 100 24" stroke="#fff" stroke-opacity="${op}" stroke-width="8" fill="none" stroke-linecap="round"/>`;
+    const wedges = n => Array.from({ length: n }, (_, i) => {
+      const a1 = i * 2 * Math.PI / n, a2 = (i + 1) * 2 * Math.PI / n, pt = a => `${(100 + 84 * Math.cos(a)).toFixed(1)} ${(100 + 84 * Math.sin(a)).toFixed(1)}`;
+      return `<path d="M100 100 L${pt(a1)} A84 84 0 0 1 ${pt(a2)}Z" fill="${i % 2 ? 'var(--wine)' : 'var(--gold-2)'}"/>`; }).join('');
+    const body = {
+      classic: `<circle ${C} r="84" fill="#17110c"/>${rings(.07)}${shine(.16)}`,
+      color: `<circle ${C} r="84" fill="var(--wine)" fill-opacity=".88"/>${rings(.12)}${shine(.35)}`,
+      splatter: `<circle ${C} r="84" fill="#17110c"/>${[[56, 70, 9, 'gold-2'], [150, 58, 7, 'wine'], [158, 128, 10, 'gold-2'], [84, 160, 8, 'wine'], [38, 122, 6, 'paper'], [118, 30, 5, 'paper'], [128, 162, 4, 'paper'], [44, 52, 4, 'wine'], [170, 96, 4, 'paper'], [70, 130, 3, 'gold-2'], [140, 92, 3, 'wine']]
+        .map(([x, y, r, c]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="var(--${c})"/>`).join('')}${rings(.07, '#fff', [70, 56])}`,
+      gold: `<circle ${C} r="84" fill="#c9a253"/><circle ${C} r="82" fill="none" stroke="#8a6a2a" stroke-width="2.5"/>${rings(.45, '#8a6a2a', [74, 64, 54, 47])}${shine(.7).replace('#fff', '#fff4d6')}`,
+      split: `<circle ${C} r="84" fill="var(--gold-2)"/><path d="M100 16 A84 84 0 0 0 100 184Z" fill="var(--wine)"/>${rings(.15, '#fff', [72, 58])}`,
+      sunburst: `${wedges(12)}${rings(.18, '#000', [78, 70, 62, 54, 47])}`,
+      swirl: `<circle ${C} r="84" fill="var(--wine)"/><path d="M100 18 C150 22 176 70 150 100 C126 128 80 110 76 84 C72 60 104 52 116 70" stroke="var(--gold-2)" stroke-width="14" fill="none" stroke-linecap="round" stroke-opacity=".85"/>
+        <path d="M30 120 C40 160 90 186 130 170" stroke="var(--paper)" stroke-width="9" fill="none" stroke-linecap="round" stroke-opacity=".7"/>${rings(.12)}`,
+      clear: `<circle ${C} r="84" fill="#efe9dd" fill-opacity=".55" stroke="#fff" stroke-opacity=".5"/>${rings(.18, '#000')}${shine(.6)}`,
+      shellac: `<circle ${C} r="84" fill="#17110c"/><circle ${C} r="81" fill="none" stroke="var(--gold)" stroke-width="6"/><circle ${C} r="76" fill="none" stroke="var(--gold-2)" stroke-opacity=".5"/>${rings(.06, '#fff', [70, 64, 58, 52, 47])}${shine(.14)}`,
+      bands: `<circle ${C} r="84" fill="var(--wine)"/><circle ${C} r="72" fill="var(--gold-2)"/><circle ${C} r="62" fill="#17110c"/><circle ${C} r="54" fill="var(--paper)"/><circle ${C} r="48" fill="var(--wine)"/>${rings(.12, '#000', [80, 68, 58])}`
+    }[style] || '';
+    return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true">${body || this.disc('classic', logo).replace(/^<svg[^>]*>|<\/svg>$/g, '')}
+      ${body ? `<image href="${esc(logo)}" data-logo x="58" y="58" width="84" height="84" preserveAspectRatio="xMidYMid meet"/><circle ${C} r="2.5" fill="#f3e8d2"/>` : ''}</svg>`;
+  },
   photo(p, i = 0) {
     const path = p.photos && p.photos[i];
     return path ? `<img src="${esc(API.photoUrl(path))}" alt="${esc(p.title)}" loading="lazy">` : this.art(p);
