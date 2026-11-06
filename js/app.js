@@ -46,7 +46,7 @@ const App = {
       track: () => Shop.track(view), orders: () => this.go('#/track'),   // لا حسابات للزبائن: التتبع برمز الطلب
       login: () => this.auth(view, 'login'), signup: () => this.auth(view, 'signup'), account: () => this.account(view),
       seller: () => this.need(['owner', 'admin']) && Seller.route(view, seg.slice(1)),
-      owner: () => this.need(['admin']) && Owner.route(view),
+      owner: () => this.need(['owner', 'admin']) && Owner.route(view),   // صاحب المتجر: تبويب الطلبات فقط
       admin: () => this.need(['admin']) && Admin.route(view)
     }[seg[0] || ''];
     try { (r || (() => { view.innerHTML = UI.empty('disc', 'الصفحة غير موجودة', '', '<a class="btn btn-primary" href="#/">العودة للرئيسية</a>'); }))(); }
@@ -60,7 +60,7 @@ const App = {
   },
   dashLink() {
     const r = API.me && API.me.role;
-    return r === 'owner' ? ['#/seller', 'منتجاتي', 'disc'] : r === 'admin' ? ['#/admin', 'لوحة المشرف', 'shield'] : null;
+    return r === 'owner' ? ['#/owner', 'الطلبات', 'receipt'] : r === 'admin' ? ['#/admin', 'لوحة المشرف', 'shield'] : null;
   },
   nav() {
     const p = '/' + (this.path.split('/')[1] || ''), kind = this.params.get('kind');
@@ -74,7 +74,8 @@ const App = {
       ['#/shop?kind=cd', 'أقراص CD', p === '/shop' && kind === 'cd'],
       ['#/shop?kind=gramophone', 'الغرامافونات', p === '/shop' && kind === 'gramophone'], ['#/track', 'تتبّع طلب', p === '/track'],
       ...(dash ? [[dash[0], dash[1], p === dash[0].slice(1)]] : []),
-      ...(API.me && API.me.role === 'admin' ? [['#/owner', 'إدارة المتجر', p === '/owner']] : [])
+      ...(API.me && API.me.role === 'admin' ? [['#/owner', 'إدارة المتجر', p === '/owner']] : []),
+      ...(API.me && API.me.role === 'owner' ? [['#/seller', 'المنتجات', p === '/seller']] : [])
     ].map(([h, t, o]) => `<a href="${h}" class="${on(o)}">${t}</a>`).join('');
     $('#bottomnav').innerHTML = [
       ['#/', 'الرئيسية', 'home', p === '/'], ['#/shop', 'المتجر', 'disc', p === '/shop' || p === '/p'],
@@ -135,7 +136,7 @@ const App = {
     if (me.role === 'disabled') { API.signOut(); return toast('هذا الحساب موقوف'); }
     toast('أهلاً ' + (me.full_name || ''));
     const back = store.get('after_login', null); store.del('after_login');
-    this.go(back || (me.role === 'owner' ? '#/seller' : me.role === 'admin' ? '#/admin' : '#/account'));
+    this.go(back || (me.role === 'owner' ? '#/owner' : me.role === 'admin' ? '#/admin' : '#/account'));
   },
 
   /* ---------- حسابي ---------- */
@@ -155,7 +156,7 @@ const App = {
         ${dash ? `<a class="row row-click" href="${dash[0]}">${icon(dash[2])}<span class="grow"><b>${dash[1]}</b></span>${icon('next')}</a>` : ''}
         ${me.role === 'admin' ? `<a class="row row-click" href="#/owner">${icon('chart')}<span class="grow"><b>إدارة المتجر</b><div class="sub">الطلبات، رسوم التوصيل، المبيعات</div></span>${icon('next')}</a>` : ''}
         <a class="row row-click" href="#/track">${icon('truck')}<span class="grow"><b>تتبّع طلب برمزه</b></span>${icon('next')}</a>
-        ${me.role === 'admin' ? `<a class="row row-click" href="#/seller">${icon('disc')}<span class="grow"><b>منتجاتي</b><div class="sub">أضف وعدّل منتجات المتجر وصورها</div></span>${icon('next')}</a>` : ''}
+        ${['owner', 'admin'].includes(me.role) ? `<a class="row row-click" href="#/seller">${icon('disc')}<span class="grow"><b>المنتجات</b><div class="sub">أضف وعدّل منتجات المتجر وصورها</div></span>${icon('next')}</a>` : ''}
       </div></div></div><div>
       <div class="card"><h3>بياناتي</h3><form id="meForm" class="stack">
         <div><label class="lbl" for="mName">الاسم</label><input class="input" id="mName" value="${esc(me.full_name)}"></div>

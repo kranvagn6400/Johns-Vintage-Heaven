@@ -170,7 +170,7 @@ const DemoAPI = {
     await this.tick();
     const o = this.db.orders.find(x => x.id === id);
     if (!o) throw new Error('الطلب غير موجود');
-    if (!this.isStaff() && !(o.customer_id === this.uidNow() && o.status === 'new' && status === 'cancelled')) this.deny();
+    if (!this.canEdit() && !(o.customer_id === this.uidNow() && o.status === 'new' && status === 'cancelled')) this.deny();
     if (['delivered', 'cancelled'].includes(o.status) && status !== o.status) throw new Error('لا يمكن تغيير طلب مكتمل أو ملغى');
     if (status === 'cancelled' && o.status !== 'cancelled')
       for (const i of this.db.order_items.filter(i => i.order_id === id && i.product_id)) {
@@ -196,7 +196,7 @@ const DemoAPI = {
     }).filter(Boolean).sort((x, y) => y.created_at.localeCompare(x.created_at));
   },
   async allOrders({ status } = {}) {
-    await this.tick(); if (!this.isStaff()) this.deny();
+    await this.tick(); if (!this.canEdit()) this.deny();   // الطلبات: صاحب المتجر والمشرف
     return this.db.orders.filter(o => !status || o.status === status).map(o => this.full(o)).sort((x, y) => y.created_at.localeCompare(x.created_at));
   },
 

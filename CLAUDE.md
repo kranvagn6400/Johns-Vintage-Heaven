@@ -18,8 +18,9 @@ Completely separate from the user's Maidan project (own folder, repo, Supabase p
 - `admin` «المشرف التقني» = the user: manages EVERYTHING — accounts/roles, store settings, orders and statuses,
   courier tracking number, delivery fees, sales («إدارة المتجر» #/owner is admin-only), and products. First-ever signup
   becomes admin (trigger). Last admin can't be removed.
-- `owner` «صاحب المتجر» = the friend: ONLY adds/edits/deletes products and their photos («المنتجات» #/seller). No orders,
-  fees, settings or accounts. Created by admin (حساب جديد → صاحب المتجر). Lands on #/seller after login.
+- `owner` «صاحب المتجر» = the friend: adds/edits/deletes products and their photos («المنتجات» #/seller) AND sees orders
+  and changes their status (#/owner shows only the «الطلبات» tab for owner; SQL `can_manage_orders()` = owner|admin, demo
+  `canEdit()`). No delivery fees, sales, settings or accounts. Created by admin. Lands on #/owner (orders) after login.
 - No sellers: signup creates customers only; seller signup, seller dashboard tabs and the «البائعون» review list are gone.
   The `seller` role value and `sellers` table remain only as the products' shop (`products.seller_id`): owner/admin get an
   approved shop named Johns Vintage Heaven via `API.ensureShop()` → RPC `ensure_staff_shop`. Owner and admin see and edit

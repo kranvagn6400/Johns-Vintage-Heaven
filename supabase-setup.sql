@@ -161,6 +161,11 @@ create or replace function public.can_edit_products() returns boolean
 language sql stable security definer set search_path = public as $$
   select coalesce(app_role() in ('owner', 'admin'), false)
 $$;
+-- رؤية الطلبات وتغيير حالتها (تأكيد، مع المندوب، تم التسليم، إلغاء): صاحب المتجر والمشرف
+create or replace function public.can_manage_orders() returns boolean
+language sql stable security definer set search_path = public as $$
+  select coalesce(app_role() in ('owner', 'admin'), false)
+$$;
 create or replace function public.is_admin() returns boolean
 language sql stable security definer set search_path = public as $$
   select coalesce(app_role() = 'admin', false)
@@ -289,13 +294,13 @@ create policy settings_write on public.settings for all to authenticated using (
 -- الطلبات تُنشأ وتُعدّل فقط عبر الدوال أدناه (place_order / set_order_status)
 drop policy if exists orders_select on public.orders;
 create policy orders_select on public.orders for select to authenticated
-  using (customer_id = auth.uid() or is_staff());
+  using (customer_id = auth.uid() or can_manage_orders());
 drop policy if exists items_select on public.order_items;
 create policy items_select on public.order_items for select to authenticated
-  using (is_staff() or exists (select 1 from orders o where o.id = order_id and o.customer_id = auth.uid()));
+  using (can_manage_orders() or exists (select 1 from orders o where o.id = order_id and o.customer_id = auth.uid()));
 drop policy if exists events_select on public.order_events;
 create policy events_select on public.order_events for select to authenticated
-  using (is_staff() or exists (select 1 from orders o where o.id = order_id and o.customer_id = auth.uid()));
+  using (can_manage_orders() or exists (select 1 from orders o where o.id = order_id and o.customer_id = auth.uid()));
 drop policy if exists payments_select on public.payments;
 create policy payments_select on public.payments for select to authenticated using (is_staff());
 
@@ -361,7 +366,7 @@ declare o orders%rowtype; it record;
 begin
   select * into o from orders where id = p_order for update;
   if not found then raise exception 'الطلب غير موجود'; end if;
-  if not is_staff() then
+  if not can_manage_orders() then
     if not (o.customer_id = auth.uid() and o.status = 'new' and p_status = 'cancelled') then
       raise exception 'ليست لديك صلاحية لهذه العملية';
     end if;

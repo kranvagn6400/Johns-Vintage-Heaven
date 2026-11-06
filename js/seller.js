@@ -27,7 +27,7 @@ const Seller = {
   },
   head(active) {
     return `<div class="page-head"><h1>${this.staff() ? 'المنتجات' : 'لوحة البائع'}</h1><span class="sp"></span><a class="btn btn-primary btn-sm" href="#/seller/new">${icon('plus')} منتج جديد</a></div>
-      <div class="tabs"><a class="tab ${active === 'products' ? 'on' : ''}" href="#/seller">${this.staff() ? 'المنتجات' : 'منتجاتي'}</a>${this.staff() ? '' : `<a class="tab ${active === 'orders' ? 'on' : ''}" href="#/seller/orders">طلبات منتجاتي</a>`}</div>`;
+      <div class="tabs"><a class="tab ${active === 'products' ? 'on' : ''}" href="#/seller">${this.staff() ? 'المنتجات' : 'منتجاتي'}</a>${this.staff() ? `<a class="tab" href="#/owner">${icon('receipt')} الطلبات</a>` : `<a class="tab ${active === 'orders' ? 'on' : ''}" href="#/seller/orders">طلبات منتجاتي</a>`}</div>`;
   },
   async home(view) {
     view.innerHTML = this.head('products') + UI.loading();
