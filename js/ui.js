@@ -46,7 +46,7 @@ const UI = {
   // رسم بديل للمنتج بدون صورة: أسطوانة أو غرامافون
   art(p, bare) {
     if (typeof Pixel !== 'undefined' && Pixel.on()) return Pixel.art(p);
-    const c = LABEL_COLORS[hashNum(p.id || p.title) % LABEL_COLORS.length];
+    const c = p.label || LABEL_COLORS[hashNum(p.id || p.title) % LABEL_COLORS.length];   // label: لون ملصق محدد (مثل أسطوانة الواجهة)
     // قرص CD فضي بلمعة قوس قزح
     if (p.kind === 'cd') return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true">
       ${bare ? '' : '<rect width="200" height="200" fill="var(--art-bg)"/>'}
