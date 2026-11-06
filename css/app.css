@@ -338,14 +338,3 @@ legend{padding:0 8px;font-weight:700;color:var(--gold);font-size:14px}
 .bar span{display:block;height:100%;background:var(--gold)}
 @media (max-width:600px){.row>.status-btns{flex-basis:100%;justify-content:flex-start;padding-inline-start:70px}}
 
-/* زر بكسل يقفز (زر «الغرامافونات» في الصفحة الرئيسية): زوايا مدرّجة بظلال بأربعة اتجاهات وحركة متقطعة */
-.btn-px{--pxc:#1a0f08;border:0;border-radius:0;background:var(--gold-2);color:#241810;margin:3px;
-  box-shadow:0 -3px 0 0 var(--pxc),0 3px 0 0 var(--pxc),-3px 0 0 0 var(--pxc),3px 0 0 0 var(--pxc),
-    inset 0 -4px 0 0 rgba(0,0,0,.25),inset 0 3px 0 0 rgba(255,255,255,.4),7px 7px 0 0 rgba(0,0,0,.35);
-  animation:pxbob 1s steps(1) infinite}
-.btn-px .ic.px{width:22px;height:22px}
-.btn-px:hover{animation-play-state:paused}
-.btn-px:active{transform:translate(3px,3px)!important;animation:none;
-  box-shadow:0 -3px 0 0 var(--pxc),0 3px 0 0 var(--pxc),-3px 0 0 0 var(--pxc),3px 0 0 0 var(--pxc),inset 0 4px 0 0 rgba(0,0,0,.25)}
-@keyframes pxbob{0%{transform:translateY(0)}25%{transform:translateY(-3px)}50%{transform:translateY(-6px)}75%{transform:translateY(-3px)}}
-@media (prefers-reduced-motion:reduce){.btn-px{animation:none}}
